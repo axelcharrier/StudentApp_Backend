@@ -7,10 +7,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\StudentApp.Domain\StudentApp.Domain.csproj" />
   </ItemGroup>
 
