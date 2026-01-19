@@ -11,7 +11,7 @@ using StudentApp.Infrastructure.Persistence;
 #nullable disable
 
 
-[DbContext(typeof(myDbContext))]
+[DbContext(typeof(AppDbContext))]
 [Migration("20260119110009_initialisation")]
 partial class initialisation
 {

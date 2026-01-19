@@ -3,7 +3,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using StudentApp.Infrastructure.Persistence;
 
 public static class ServiceCollectionExtensions
 {
@@ -12,13 +11,13 @@ public static class ServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<myDbContext>(options =>
+        services.AddDbContext<AppDbContext>(options =>
         options
             .UseSqlServer(
                 configuration.GetConnectionString("DefaultConnexion"),
                 x =>
                 {
-                    x.MigrationsAssembly(typeof(myDbContext).Assembly.GetName().Name);
+                    x.MigrationsAssembly(typeof(AppDbContext).Assembly.GetName().Name);
                 }
             )
          );
