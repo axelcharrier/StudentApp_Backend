@@ -3,6 +3,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StudentApp.Infrastructure.Persistence;
 
 public static class ServiceCollectionExtensions
 {

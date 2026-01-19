@@ -1,13 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
-using StudentApp.Domain.Models;
+﻿namespace StudentApp.Infrastructure.Persistence;
 
-namespace StudentApp.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+using StudentApp.Domain.Entities;
 
-public partial class AppDbContext : DbContext
+/// <summary>
+/// Represents the database context for the application
+/// </summary>
+/// <param name="options">The options to be used by the context. Cannot be null.</param>
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    public AppDbContext() { }
-
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
-    public DbSet<Student> Students { get; set; }
+    /// <summary>
+    /// Student DbSet().
+    /// </summary>
+    public DbSet<Student> Students => this.Set<Student>();
 }

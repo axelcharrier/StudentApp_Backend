@@ -1,5 +1,8 @@
-﻿namespace StudentApp.Domain.Models;
+﻿namespace StudentApp.Domain.Entities;
 
+/// <summary>
+/// Represents a student.
+/// </summary>
 public sealed record class Student
 {
     public required int Id { get; set; }
