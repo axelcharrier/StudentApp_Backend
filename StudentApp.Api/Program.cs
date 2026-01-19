@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using StudentApp.Application.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);

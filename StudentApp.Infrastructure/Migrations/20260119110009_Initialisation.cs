@@ -1,22 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿namespace StudentApp.Infrastructure.Migrations;
+
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace StudentApp.Infrastructure.Migrations
+
+/// <inheritdoc />
+public partial class Initialisation : Migration
 {
     /// <inheritdoc />
-    public partial class Initialisation : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
 
-        }
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
 
-        }
     }
 }

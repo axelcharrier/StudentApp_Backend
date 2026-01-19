@@ -4,14 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace StudentApp.Infrastructure.Persistence
+namespace StudentApp.Infrastructure.Persistence;
+
+public partial class myDbContext : DbContext
 {
-    public partial class myDbContext : DbContext
-    {
-        public myDbContext() { }
+    public myDbContext() { }
 
-        public myDbContext(DbContextOptions<myDbContext> options) : base(options) { }
+    public myDbContext(DbContextOptions<myDbContext> options) : base(options) { }
 
-        public DbSet<Student> Students { get; set; }
-    }
+    public DbSet<Student> Students { get; set; }
 }
