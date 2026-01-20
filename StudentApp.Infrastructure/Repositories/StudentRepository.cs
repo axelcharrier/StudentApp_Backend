@@ -14,7 +14,7 @@ public interface IStudentRepository
 
 }
 
-internal class StudentRepository
+public class StudentRepository : IStudentRepository
 {
     private readonly AppDbContext Context;
 
@@ -56,7 +56,8 @@ internal class StudentRepository
         {
             Context.Students.Remove(studentToDelete);
             Context.SaveChanges();
+            return true;
         }
-        return true;
+        return false;
     }
 }

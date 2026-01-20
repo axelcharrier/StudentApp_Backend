@@ -17,7 +17,7 @@ public interface IStudentService
 /// <summary>
 /// Provides operations for retrieving student data using a student repository.
 /// </summary>
-internal class StudentService
+public class StudentService : IStudentService
 {
     private readonly IStudentRepository StudentRepository;
 
@@ -25,9 +25,9 @@ internal class StudentService
     /// Initializes a new instance of the StudentService class using the student repository.
     /// </summary>
     /// <param name="_studentRepository">The repository used to access data. Cannot be null.</param>
-    public StudentService(IStudentRepository _studentRepository)
+    public StudentService(IStudentRepository studentRepository)
     {
-        StudentRepository = _studentRepository;
+        StudentRepository = studentRepository;
     }
 
     /// <summary>
@@ -37,16 +37,9 @@ internal class StudentService
     public StudentDto[] GetAllStudents()
     {
         var students = StudentRepository.getAllStudents();
-        StudentDto[] studentsDto = [];
+        var result = students.Select(stu => new StudentDto(stu.Id, stu.FirstName, stu.LastName)).ToArray();
 
-        foreach (Student student in students)
-        {
-            var studentToAdd = new StudentDto(student.Id, student.FirstName,
-                student.LastName);
-            studentsDto.Append(studentToAdd);
-        }
-
-        return studentsDto;
+        return result;
     }
 
     /// <summary>
