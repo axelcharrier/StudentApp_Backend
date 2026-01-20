@@ -1,65 +1,62 @@
-﻿using Microsoft.EntityFrameworkCore;
-using StudentApp.Domain.Models;
+﻿namespace StudentApp.Infrastructure.Repositories;
+
+using Microsoft.EntityFrameworkCore;
+using StudentApp.Domain.Entities;
 using StudentApp.Infrastructure.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace StudentApp.Infrastructure.Repositories
+public interface IStudentRepository
 {
-    public interface IStudentRepository
-    {
-        IEnumerable<Student> getAllStudents();
-        Student? getStudentById(int id);
-        int AddStudent(Student studentToAdd);
-        Student UpdateStudent(Student studentToUpdate);
-        Boolean DeleteStudent(int id);
+    IEnumerable<Student> getAllStudents();
+    Student? getStudentById(int id);
+    int AddStudent(Student studentToAdd);
+    Student UpdateStudent(Student studentToUpdate);
+    Boolean DeleteStudent(int id);
 
+}
+
+internal class StudentRepository
+{
+    private readonly AppDbContext Context;
+
+    public StudentRepository(AppDbContext _context)
+    {
+        Context = _context;
     }
 
-    internal class StudentRepository
+    public IEnumerable<Student> getAllStudents()
     {
-        private readonly MyDbContext Context;
+        var list = Context.Students.ToList();
+        return list;
+    }
 
-        public StudentRepository(MyDbContext _context)
+    public Student? getStudentById(int id)
+    {
+        var studentToReturn = Context.Students.Find(id);
+        return studentToReturn;
+    }
+
+    public int AddStudent(Student studentToAdd)
+    {
+        Context.Students.Add(studentToAdd);
+        Context.SaveChanges();
+        return studentToAdd.Id;
+    }
+
+    public Student UpdateStudent(Student studentToUpdate)
+    {
+        Context.Update(studentToUpdate);
+        Context.SaveChanges();
+        return studentToUpdate;
+    }
+
+    public Boolean DeleteStudent(int id)
+    {
+        var studentToDelete = Context.Students.Find(id);
+        if (studentToDelete != null)
         {
-            Context = _context;
-        }
-
-        public IEnumerable<Student> getAllStudents()
-        {
-            var list = Context.Students.ToList();
-            return list;
-        }
-
-        public Student? getStudentById(int id) {
-            var studentToReturn = Context.Students.Find(id);
-            return studentToReturn;
-        }
-
-        public int AddStudent(Student studentToAdd)
-        {
-            Context.Students.Add(studentToAdd);
+            Context.Students.Remove(studentToDelete);
             Context.SaveChanges();
-            return studentToAdd.Id;
         }
-
-        public Student UpdateStudent(Student studentToUpdate)
-        {
-            Context.Update(studentToUpdate);
-            Context.SaveChanges();
-            return studentToUpdate;
-        }
-
-        public Boolean DeleteStudent(int id)
-        {
-            var studentToDelete = Context.Students.Find(id);
-            if (studentToDelete != null)
-            {
-                Context.Students.Remove(studentToDelete);
-                Context.SaveChanges();
-            }
-            return true;
-        }
+        return true;
     }
 }
