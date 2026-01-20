@@ -13,7 +13,7 @@ using StudentApp.Infrastructure.Persistence;
 
 [DbContext(typeof(AppDbContext))]
 [Migration("20260119110137_students")]
-partial class students
+partial class Students
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
