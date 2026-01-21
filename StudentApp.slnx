@@ -1,6 +1,10 @@
 <Solution>
-  <Project Path="StudentApp.Infrastructure/StudentApp.Infrastructure.csproj" />
+  <Folder Name="/Éléments de solution/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
   <Project Path="StudentApp.Api/StudentApp.Api.csproj" />
   <Project Path="StudentApp.Application/StudentApp.Application.csproj" />
   <Project Path="StudentApp.Domain/StudentApp.Domain.csproj" />
+  <Project Path="StudentApp.Infrastructure/StudentApp.Infrastructure.csproj" />
 </Solution>
