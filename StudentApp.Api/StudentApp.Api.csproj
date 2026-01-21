@@ -2,6 +2,10 @@
   <PropertyGroup>
     <UserSecretsId>a0fb91c1-b904-4eda-b6c4-8de4922181e1</UserSecretsId>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Controllers\WeatherForecastController.cs" />
+    <Compile Remove="WeatherForecast.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
