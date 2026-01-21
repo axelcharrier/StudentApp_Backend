@@ -1,64 +1,33 @@
 ﻿namespace StudentApp.Application.Implementations;
 
+using StudentApp.Application.Abstraction;
 using StudentApp.Application.Models;
 using StudentApp.Domain.Entities;
-using StudentApp.Infrastructure.Repositories;
+using StudentApp.Infrastructure.Abstractions;
 
 
-public interface IStudentService
+/// <inheritdoc/>
+public sealed class StudentService(IStudentRepository studentRepository) : IStudentService
 {
-    StudentDto[] GetAllStudents();
-    StudentDto GetStudentById(int id);
-    int AddStudent(StudentDto student);
-    StudentDto UpdateStudent(StudentDto student);
-    Boolean DeleteStudent(int id);
-}
 
-/// <summary>
-/// Provides operations for retrieving student data using a student repository.
-/// </summary>
-public class StudentService : IStudentService
-{
-    private readonly IStudentRepository StudentRepository;
-
-    /// <summary>
-    /// Initializes a new instance of the StudentService class using the student repository.
-    /// </summary>
-    /// <param name="_studentRepository">The repository used to access data. Cannot be null.</param>
-    public StudentService(IStudentRepository studentRepository)
+    public async Task<StudentDto[]> GetAllStudents(CancellationToken ct)
     {
-        StudentRepository = studentRepository;
-    }
-
-    /// <summary>
-    /// Retrieves all students as an array of data transfer objects.
-    /// </summary>
-    /// <returns>An array of <see cref="StudentDto"/> objects representing all students</returns>
-    public StudentDto[] GetAllStudents()
-    {
-        var students = StudentRepository.getAllStudents();
+        var students = await studentRepository.getAllStudents(ct);
         var result = students.Select(stu => new StudentDto(stu.Id, stu.FirstName, stu.LastName)).ToArray();
 
         return result;
     }
 
-    /// <summary>
-    /// Retrieves a student by their unique identifier.
-    /// </summary>
-    /// <param name="id">The unique identifier of the student to retrieve.</param>
-    /// <returns>A <see cref="StudentDto"/> representing the student with the specified identifier.</returns>
-    public StudentDto GetStudentById(int id)
+
+    public async Task<StudentDto?> GetStudentById(int id, CancellationToken ct)
     {
-        var student = StudentRepository.getStudentById(id);
+        var student = await studentRepository.getStudentById(id, ct);
+        if (student is null)
+            return null;
         return new StudentDto(student.Id, student.FirstName, student.LastName);
     }
 
-    /// <summary>
-    /// Adds a new student to the repository using the provided student data transfer object.
-    /// </summary>
-    /// <param name="student">An object containing the first and last name of the student to add. Cannot be null.</param>
-    /// <returns>The unique identifier of the newly added student.</returns>
-    public int AddStudent(StudentDto student)
+    public async Task<int> AddStudent(StudentDto student, CancellationToken ct)
     {
         var studentToAdd = new Student()
         {
@@ -66,37 +35,28 @@ public class StudentService : IStudentService
             LastName = student.LastName
         };
 
-        return StudentRepository.AddStudent(studentToAdd);
-    }
-
-    /// <summary>
-    /// Updates the details of an existing student using the provided student data.
-    /// </summary>
-    /// <remarks>If the specified student Id does not exist, the update operation may fail</remarks>
-    /// <param name="student">An object containing the updated information for the student.</param>
-    /// <returns>A StudentDto representing the student after the update has been applied.</returns>
-    public StudentDto UpdateStudent(StudentDto student)
-    {
-        var studentToUpdate = new Student()
-        {
-            Id = student.Id,
-            FirstName = student.FirstName,
-            LastName = student.LastName
-        };
-
-        var updatedStudent = StudentRepository.UpdateStudent(studentToUpdate);
-
-        return new StudentDto(updatedStudent.Id, updatedStudent.FirstName, updatedStudent.LastName);
+        return await studentRepository.AddStudent(studentToAdd, ct);
     }
 
 
-    /// <summary>
-    /// Deletes the student record with the specified identifier.
-    /// </summary>
-    /// <param name="id">The unique identifier of the student to delete.</param>
-    /// <returns>true if the student was successfully deleted; otherwise, false.</returns>
-    public Boolean DeleteStudent(int id)
+    public async Task<StudentDto?> UpdateStudent(StudentDto student, CancellationToken ct)
     {
-        return StudentRepository.DeleteStudent(id);
+        //récupération modification sauvegarde. CHANGEMENT A FAIRE
+        var studentToUpdate = await studentRepository.getStudentById(student.Id, ct);
+
+        if (studentToUpdate is null)
+            return null;
+
+        studentToUpdate.FirstName = student.FirstName;
+        studentToUpdate.LastName = student.LastName;
+
+        await studentRepository.UpdateStudent(studentToUpdate, ct);
+
+        return student;
+    }
+
+    public async Task<Boolean> DeleteStudent(int id, CancellationToken ct)
+    {
+        return await studentRepository.DeleteStudent(id, ct);
     }
 }

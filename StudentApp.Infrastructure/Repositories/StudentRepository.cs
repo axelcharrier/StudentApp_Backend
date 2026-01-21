@@ -2,60 +2,41 @@
 
 using Microsoft.EntityFrameworkCore;
 using StudentApp.Domain.Entities;
+using StudentApp.Infrastructure.Abstractions;
 using StudentApp.Infrastructure.Persistence;
 
-public interface IStudentRepository
+/// <inheritdoc/>
+public class StudentRepository(AppDbContext context) : IStudentRepository
 {
-    IEnumerable<Student> getAllStudents();
-    Student? getStudentById(int id);
-    int AddStudent(Student studentToAdd);
-    Student UpdateStudent(Student studentToUpdate);
-    Boolean DeleteStudent(int id);
 
-}
+    public async Task<IEnumerable<Student>> getAllStudents(CancellationToken ct)
+        => await context.Students.ToListAsync(ct).ConfigureAwait(false);
 
-public class StudentRepository : IStudentRepository
-{
-    private readonly AppDbContext Context;
 
-    public StudentRepository(AppDbContext _context)
+    public async Task<Student?> getStudentById(int id, CancellationToken ct)
+        => await context.Students.FirstOrDefaultAsync(stu => stu.Id == id, ct).ConfigureAwait(false);
+
+    public async Task<int> AddStudent(Student studentToAdd, CancellationToken ct)
     {
-        Context = _context;
-    }
-
-    public IEnumerable<Student> getAllStudents()
-    {
-        var list = Context.Students.ToList();
-        return list;
-    }
-
-    public Student? getStudentById(int id)
-    {
-        var studentToReturn = Context.Students.Find(id);
-        return studentToReturn;
-    }
-
-    public int AddStudent(Student studentToAdd)
-    {
-        Context.Students.Add(studentToAdd);
-        Context.SaveChanges();
+        await context.Students.AddAsync(studentToAdd, ct).ConfigureAwait(false);
+        await context.SaveChangesAsync(ct).ConfigureAwait(false);
         return studentToAdd.Id;
     }
 
-    public Student UpdateStudent(Student studentToUpdate)
+    public async Task<Student> UpdateStudent(Student studentToUpdate, CancellationToken ct)
     {
-        Context.Update(studentToUpdate);
-        Context.SaveChanges();
+        context.Update(studentToUpdate);
+        await context.SaveChangesAsync(ct).ConfigureAwait(false);
         return studentToUpdate;
     }
 
-    public Boolean DeleteStudent(int id)
+    public async Task<Boolean> DeleteStudent(int id, CancellationToken ct)
     {
-        var studentToDelete = Context.Students.Find(id);
+        var studentToDelete = await context.Students.FirstOrDefaultAsync(stu => stu.Id == id, ct).ConfigureAwait(false);
         if (studentToDelete != null)
         {
-            Context.Students.Remove(studentToDelete);
-            Context.SaveChanges();
+            context.Students.Remove(studentToDelete);
+            await context.SaveChangesAsync(ct).ConfigureAwait(false);
             return true;
         }
         return false;

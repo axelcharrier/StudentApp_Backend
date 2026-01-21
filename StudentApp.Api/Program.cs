@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using StudentApp.Application.Abstraction;
 using StudentApp.Application.Extensions;
 using StudentApp.Application.Implementations;
+using StudentApp.Infrastructure.Abstractions;
 using StudentApp.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
