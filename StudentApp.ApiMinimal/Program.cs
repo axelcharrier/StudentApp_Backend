@@ -1,4 +1,5 @@
 using Scalar.AspNetCore;
+using StudentApp.ApiMinimal.Endpoints;
 using StudentApp.Application.Abstraction;
 using StudentApp.Application.Extensions;
 using StudentApp.Application.Implementations;
@@ -30,6 +31,8 @@ var app = builder.Build();
 
 #region Méthodes
 
+await StudentsEndpoints.Map(app);
+
 #endregion 
 
 // Configure the HTTP request pipeline.
@@ -40,5 +43,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAngularOrigins");
+
+app.UseHttpsRedirection();
 
 await app.RunAsync();
