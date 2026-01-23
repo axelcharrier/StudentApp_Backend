@@ -9,6 +9,6 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.2" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.2" />
     <PackageVersion Include="Scalar.Aspire" Version="0.8.20" />
-    <PackageVersion Include="Scalar.AspNetCore" Version="2.12.11" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.12.14" />
   </ItemGroup>
 </Project>
