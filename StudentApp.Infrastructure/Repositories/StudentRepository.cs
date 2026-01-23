@@ -13,7 +13,7 @@ public class StudentRepository(AppDbContext context) : IStudentRepository
         => await context.Students.ToListAsync(ct).ConfigureAwait(false);
 
 
-    public async Task<Student?> getStudentById(int id, CancellationToken ct)
+    public async Task<Student?> getStudentById(int? id, CancellationToken ct)
         => await context.Students.FirstOrDefaultAsync(stu => stu.Id == id, ct).ConfigureAwait(false);
 
     public async Task<int> AddStudent(Student studentToAdd, CancellationToken ct)

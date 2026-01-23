@@ -41,7 +41,6 @@ public sealed class StudentService(IStudentRepository studentRepository) : IStud
 
     public async Task<StudentDto?> UpdateStudent(StudentDto student, CancellationToken ct)
     {
-        //récupération modification sauvegarde. CHANGEMENT A FAIRE
         var studentToUpdate = await studentRepository.getStudentById(student.Id, ct);
 
         if (studentToUpdate is null)

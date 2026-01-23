@@ -95,7 +95,7 @@ public class StudentController(IStudentService studentService) : ControllerBase
     /// <param name="id">The unique identifier of the student to delete.</param>
     /// <returns>An <see cref="OkObjectResult"/> if the student was successfully deleted; otherwise, a <see
     /// cref="BadRequestObjectResult"/> if no student with the specified identifier exists.</returns>
-    [HttpDelete("id")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteStudent(int id, CancellationToken ct)
     {
         if (await studentService.GetStudentById(id, ct) is null)
