@@ -20,7 +20,7 @@ public interface IStudentRepository
     /// <param name="ct">A cancellation token that can be used to cancel the asynchronous operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the student with the specified
     /// identifier, or <see langword="null"/> if no matching student is found.</returns>
-    Task<Student?> getStudentById(int id, CancellationToken ct);
+    Task<Student?> getStudentById(int? id, CancellationToken ct);
 
     /// <summary>
     /// Asynchronously adds a new student to the data store.
