@@ -13,7 +13,7 @@ using StudentApp.Infrastructure.Persistence;
 
 [DbContext(typeof(AppDbContext))]
 [Migration("20260119110009_initialisation")]
-partial class initialisation
+partial class Initialisation
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
