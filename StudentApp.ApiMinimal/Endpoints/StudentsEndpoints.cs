@@ -16,7 +16,7 @@ public static class StudentsEndpoints
     /// <returns>A task that represents the asynchronous operation of mapping the student endpoints.</returns>
     public static async Task Map(WebApplication application)
     {
-        var studentsRoute = application.MapGroup("/Students");
+        var studentsRoute = application.MapGroup("/students");
 
 
         studentsRoute.MapGet("", GetAllAsync)
