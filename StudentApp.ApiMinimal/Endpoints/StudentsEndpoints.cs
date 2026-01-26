@@ -26,21 +26,21 @@ public static class StudentsEndpoints
             .WithDisplayName("Get all students")
             .WithSummary("Get all students from de database");
 
-        studentsRoute.MapGet("/GetById/{id}", GetByIdAsync)
+        studentsRoute.MapGet("/{id}", GetByIdAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .WithName("GetStudentById")
             .WithDisplayName("Get a student by id")
             .WithSummary("Get a student thanks to his id");
 
-        studentsRoute.MapPost("/Add", AddStudentAsync)
+        studentsRoute.MapPost("", AddStudentAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .WithName("AddStudent")
             .WithDisplayName("Add a student")
             .WithSummary("Add a student to the database");
 
-        studentsRoute.MapPut("/Update", UpdateStudentAsync)
+        studentsRoute.MapPut("", UpdateStudentAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status400BadRequest)
@@ -48,7 +48,7 @@ public static class StudentsEndpoints
             .WithDisplayName("Update a student")
             .WithSummary("Update a student who already exists");
 
-        studentsRoute.MapDelete("/Delete/{id}", DeleteStudentAsync)
+        studentsRoute.MapDelete("{id}", DeleteStudentAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .WithName("DeleteStudent")
