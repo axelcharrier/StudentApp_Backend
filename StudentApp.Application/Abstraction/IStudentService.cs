@@ -49,5 +49,5 @@ public interface IStudentService
     /// <returns>A task that represents the asynchronous operation. The task result contains a <see cref="StudentDto"/> with the
     /// updated student information if the update is successful; otherwise, <see langword="null"/> if the student does
     /// not exist.</returns>
-    Task<StudentDto?> UpdateStudent(StudentDto student, CancellationToken ct);
+    Task<StudentDto?> UpdateStudent(int id, StudentDto student, CancellationToken ct);
 }

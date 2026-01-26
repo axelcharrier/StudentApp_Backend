@@ -72,14 +72,14 @@ public class StudentController(IStudentService studentService) : ControllerBase
     /// <param name="student">The student information to update. Must not be null.</param>
     /// <returns>An IActionResult that represents the result of the update operation. Returns 200 OK with the updated student if
     /// successful; otherwise, returns 400 Bad Request with an error message.</returns>
-    [HttpPut]
-    public async Task<IActionResult> UpdateStudent([FromBody] StudentDto student, CancellationToken ct)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateStudent(int id, [FromBody] StudentDto student, CancellationToken ct)
     {
         if (student is null)
             return BadRequest(new { message = "Student canno be null" });
         try
         {
-            var updatedStudent = await studentService.UpdateStudent(student, ct);
+            var updatedStudent = await studentService.UpdateStudent(id, student, ct);
             return Ok(updatedStudent);
         }
         catch (Exception ex)

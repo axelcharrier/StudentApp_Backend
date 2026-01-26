@@ -4,6 +4,7 @@
     <File Path="Directory.Packages.props" />
   </Folder>
   <Project Path="StudentApp.Api/StudentApp.Api.csproj" />
+  <Project Path="StudentApp.ApiMinimal/StudentApp.ApiMinimal.csproj" />
   <Project Path="StudentApp.Application/StudentApp.Application.csproj" />
   <Project Path="StudentApp.Domain/StudentApp.Domain.csproj" />
   <Project Path="StudentApp.Infrastructure/StudentApp.Infrastructure.csproj" />
