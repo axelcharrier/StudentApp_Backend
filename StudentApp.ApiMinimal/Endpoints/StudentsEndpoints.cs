@@ -18,29 +18,28 @@ public static class StudentsEndpoints
     {
         var studentsRoute = application.MapGroup("/students");
 
-
-        studentsRoute.MapGet("", GetAllAsync)
+        studentsRoute.MapGet(string.Empty, GetAllAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .WithName("GetAllStudents")
             .WithDisplayName("Get all students")
             .WithSummary("Get all students from de database");
 
-        studentsRoute.MapGet("/{id}", GetByIdAsync)
+        studentsRoute.MapGet("{id}", GetByIdAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .WithName("GetStudentById")
             .WithDisplayName("Get a student by id")
             .WithSummary("Get a student thanks to his id");
 
-        studentsRoute.MapPost("", AddStudentAsync)
+        studentsRoute.MapPost(string.Empty, AddStudentAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .WithName("AddStudent")
             .WithDisplayName("Add a student")
             .WithSummary("Add a student to the database");
 
-        studentsRoute.MapPut("", UpdateStudentAsync)
+        studentsRoute.MapPut("{id}", UpdateStudentAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status400BadRequest)
@@ -59,10 +58,7 @@ public static class StudentsEndpoints
     #region Méthodes
 
     private static async Task<IResult> GetAllAsync(CancellationToken ct, [FromServices] IStudentService service)
-    {
-        var studentList = await service.GetAllStudents(ct);
-        return Results.Ok(studentList);
-    }
+        => Results.Ok(await service.GetAllStudents(ct));
 
     private static async Task<IResult> GetByIdAsync(CancellationToken ct, int id, [FromServices] IStudentService service)
     {
@@ -74,14 +70,15 @@ public static class StudentsEndpoints
 
     private static async Task<IResult> UpdateStudentAsync(
                 CancellationToken ct,
+                [FromRoute] int id,
                 [FromBody] StudentDto student,
-                IStudentService service)
+                [FromServices] IStudentService service)
     {
         if (student is null)
             return Results.BadRequest(new { message = "Student canno be null" });
         try
         {
-            var updatedStudent = await service.UpdateStudent(student, ct);
+            var updatedStudent = await service.UpdateStudent(id, student, ct);
             return Results.Ok(updatedStudent);
         }
         catch (Exception ex)
@@ -99,15 +96,14 @@ public static class StudentsEndpoints
             return Results.BadRequest(new { message = "Student cannot be null" });
         try
         {
-            var result = await service.AddStudent(student, ct);
-            return Results.Ok(result);
+            await service.AddStudent(student, ct);
+            return Results.Created();
         }
         catch (Exception ex)
         {
             return Results.BadRequest(new { message = ex.Message });
         }
     }
-
 
     private static async Task<IResult> DeleteStudentAsync(
         CancellationToken ct,
@@ -122,7 +118,6 @@ public static class StudentsEndpoints
 
 
     }
-
 
     #endregion
 }
