@@ -11,7 +11,7 @@ public interface IStudentRepository
     /// </summary>
     /// <param name="ct">A cancellation token that can be used to cancel the asynchronous operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains a collection of all students.</returns>
-    Task<IEnumerable<Student>> getAllStudents(CancellationToken ct);
+    Task<IEnumerable<Student>> GetAllStudentsAsync(CancellationToken ct);
 
     /// <summary>
     /// Asynchronously retrieves a student with the specified identifier.
@@ -20,7 +20,7 @@ public interface IStudentRepository
     /// <param name="ct">A cancellation token that can be used to cancel the asynchronous operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the student with the specified
     /// identifier, or <see langword="null"/> if no matching student is found.</returns>
-    Task<Student?> getStudentById(int? id, CancellationToken ct);
+    Task<Student?> GetStudentByIdAsync(int? id, CancellationToken ct);
 
     /// <summary>
     /// Asynchronously adds a new student to the data store.
@@ -29,7 +29,7 @@ public interface IStudentRepository
     /// <param name="ct">A cancellation token that can be used to cancel the asynchronous operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the unique identifier of the newly
     /// added student.</returns>
-    Task<int> AddStudent(Student studentToAdd, CancellationToken ct);
+    Task<int> AddStudentAsync(Student studentToAdd, CancellationToken ct);
 
     /// <summary>
     /// Asynchronously updates the specified student entity in the data store.
@@ -38,7 +38,7 @@ public interface IStudentRepository
     /// Cannot be null.</param>
     /// <param name="ct">A cancellation token that can be used to cancel the asynchronous operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the updated student entity.</returns>
-    Task<Student> UpdateStudent(Student studentToUpdate, CancellationToken ct);
+    Task<Student> UpdateStudentAsync(Student studentToUpdate, CancellationToken ct);
 
     /// <summary>
     /// Deletes the student with the specified identifier from the data store asynchronously.
@@ -47,6 +47,6 @@ public interface IStudentRepository
     /// <param name="ct">A cancellation token that can be used to cancel the asynchronous operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result is <see langword="true"/> if the student was
     /// found and deleted; otherwise, <see langword="false"/>.</returns>
-    Task<Boolean> DeleteStudent(int id, CancellationToken ct);
+    Task<Boolean> DeleteStudentAsync(int id, CancellationToken ct);
 
 }

@@ -22,7 +22,7 @@ public class StudentController(IStudentService studentService) : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<StudentDto>> GetAllStudent(CancellationToken ct)
     {
-        var studentList = await studentService.GetAllStudents(ct);
+        var studentList = await studentService.GetAllStudentsAsync(ct);
         return studentList;
     }
 
@@ -35,7 +35,7 @@ public class StudentController(IStudentService studentService) : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetStudentById(int id, CancellationToken ct)
     {
-        var student = await studentService.GetStudentById(id, ct);
+        var student = await studentService.GetStudentByIdAsync(id, ct);
         if (student is null)
             return NotFound(new { message = $"The student with this id doesnt exist" });
         return Ok(student);
@@ -57,7 +57,7 @@ public class StudentController(IStudentService studentService) : ControllerBase
             return BadRequest(new { message = "Student cannot be null" });
         try
         {
-            var result = await studentService.AddStudent(student, ct);
+            var result = await studentService.AddStudentAsync(student, ct);
             return Ok(result);
         }
         catch (Exception ex)
@@ -79,7 +79,7 @@ public class StudentController(IStudentService studentService) : ControllerBase
             return BadRequest(new { message = "Student canno be null" });
         try
         {
-            var updatedStudent = await studentService.UpdateStudent(id, student, ct);
+            var updatedStudent = await studentService.UpdateStudentAsync(id, student, ct);
             return Ok(updatedStudent);
         }
         catch (Exception ex)
@@ -98,9 +98,9 @@ public class StudentController(IStudentService studentService) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteStudent(int id, CancellationToken ct)
     {
-        if (await studentService.GetStudentById(id, ct) is null)
+        if (await studentService.GetStudentByIdAsync(id, ct) is null)
             return BadRequest("Cannot found student with this Id");
 
-        return Ok(await studentService.DeleteStudent(id, ct));
+        return Ok(await studentService.DeleteStudentAsync(id, ct));
     }
 }

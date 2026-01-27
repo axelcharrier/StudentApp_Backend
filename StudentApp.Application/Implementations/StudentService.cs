@@ -10,23 +10,23 @@ using StudentApp.Infrastructure.Abstractions;
 public sealed class StudentService(IStudentRepository studentRepository) : IStudentService
 {
 
-    public async Task<StudentDto[]> GetAllStudents(CancellationToken ct)
+    public async Task<StudentDto[]> GetAllStudentsAsync(CancellationToken ct)
     {
-        var students = await studentRepository.getAllStudents(ct);
+        var students = await studentRepository.GetAllStudentsAsync(ct);
         var result = students.Select(stu => new StudentDto(stu.Id, stu.FirstName, stu.LastName)).ToArray();
 
         return result;
     }
 
-    public async Task<StudentDto?> GetStudentById(int id, CancellationToken ct)
+    public async Task<StudentDto?> GetStudentByIdAsync(int id, CancellationToken ct)
     {
-        var student = await studentRepository.getStudentById(id, ct);
+        var student = await studentRepository.GetStudentByIdAsync(id, ct);
         if (student is null)
             return null;
         return new StudentDto(student.Id, student.FirstName, student.LastName);
     }
 
-    public async Task<int> AddStudent(StudentDto student, CancellationToken ct)
+    public async Task<int> AddStudentAsync(StudentDto student, CancellationToken ct)
     {
         var studentToAdd = new Student()
         {
@@ -34,16 +34,16 @@ public sealed class StudentService(IStudentRepository studentRepository) : IStud
             LastName = student.LastName
         };
 
-        return await studentRepository.AddStudent(studentToAdd, ct);
+        return await studentRepository.AddStudentAsync(studentToAdd, ct);
     }
 
 
-    public async Task<StudentDto?> UpdateStudent(int id, StudentDto student, CancellationToken ct)
+    public async Task<StudentDto?> UpdateStudentAsync(int id, StudentDto student, CancellationToken ct)
     {
 
-        var studentToUpdate = await studentRepository.getStudentById(student.Id, ct);
+        var studentToUpdate = await studentRepository.GetStudentByIdAsync(student.Id, ct);
 
-        if (studentToUpdate.Id == id)
+        if (studentToUpdate?.Id == id)
         {
             if (studentToUpdate is null)
                 return null;
@@ -51,15 +51,15 @@ public sealed class StudentService(IStudentRepository studentRepository) : IStud
             studentToUpdate.FirstName = student.FirstName;
             studentToUpdate.LastName = student.LastName;
 
-            await studentRepository.UpdateStudent(studentToUpdate, ct);
+            await studentRepository.UpdateStudentAsync(studentToUpdate, ct);
 
             return student;
         }
         return null;
     }
 
-    public async Task<Boolean> DeleteStudent(int id, CancellationToken ct)
+    public async Task<Boolean> DeleteStudentAsync(int id, CancellationToken ct)
     {
-        return await studentRepository.DeleteStudent(id, ct);
+        return await studentRepository.DeleteStudentAsync(id, ct);
     }
 }
