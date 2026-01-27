@@ -5,6 +5,7 @@
   </Folder>
   <Project Path="StudentApp.Api/StudentApp.Api.csproj" />
   <Project Path="StudentApp.ApiMinimal/StudentApp.ApiMinimal.csproj" />
+  <Project Path="StudentApp.Application.Tests/StudentApp.Application.Tests.csproj" Id="181c1c7b-a806-49e9-91bb-3205f36f4d7d" />
   <Project Path="StudentApp.Application/StudentApp.Application.csproj" />
   <Project Path="StudentApp.Domain/StudentApp.Domain.csproj" />
   <Project Path="StudentApp.Infrastructure/StudentApp.Infrastructure.csproj" />

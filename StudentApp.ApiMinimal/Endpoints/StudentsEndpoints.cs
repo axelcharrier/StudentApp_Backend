@@ -58,11 +58,11 @@ public static class StudentsEndpoints
     #region Méthodes
 
     private static async Task<IResult> GetAllAsync(CancellationToken ct, [FromServices] IStudentService service)
-        => Results.Ok(await service.GetAllStudents(ct));
+        => Results.Ok(await service.GetAllStudentsAsync(ct));
 
     private static async Task<IResult> GetByIdAsync(CancellationToken ct, int id, [FromServices] IStudentService service)
     {
-        var student = await service.GetStudentById(id, ct);
+        var student = await service.GetStudentByIdAsync(id, ct);
         if (student is null)
             return Results.NotFound(new { message = $"The student with this id doesnt exist" });
         return Results.Ok(student);
@@ -78,7 +78,7 @@ public static class StudentsEndpoints
             return Results.BadRequest(new { message = "Student canno be null" });
         try
         {
-            var updatedStudent = await service.UpdateStudent(id, student, ct);
+            var updatedStudent = await service.UpdateStudentAsync(id, student, ct);
             return Results.Ok(updatedStudent);
         }
         catch (Exception ex)
@@ -96,7 +96,7 @@ public static class StudentsEndpoints
             return Results.BadRequest(new { message = "Student cannot be null" });
         try
         {
-            await service.AddStudent(student, ct);
+            await service.AddStudentAsync(student, ct);
             return Results.Created();
         }
         catch (Exception ex)
@@ -110,10 +110,10 @@ public static class StudentsEndpoints
         [FromRoute] int id,
         [FromServices] IStudentService service)
     {
-        if (await service.GetStudentById(id, ct) is null)
+        if (await service.GetStudentByIdAsync(id, ct) is null)
             return Results.BadRequest("Cannot found student with this Id");
 
-        return Results.Ok(await service.DeleteStudent(id, ct));
+        return Results.Ok(await service.DeleteStudentAsync(id, ct));
 
 
 
