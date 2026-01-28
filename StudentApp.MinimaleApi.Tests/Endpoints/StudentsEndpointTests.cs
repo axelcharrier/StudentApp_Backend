@@ -9,6 +9,10 @@ using StudentApp.Application.Models;
 using System.Reflection;
 using System.Threading;
 
+/// <summary>
+/// Contains unit tests for the Students API endpoints, verifying correct behavior for student-related operations such
+/// as retrieval, creation, update, and deletion.
+/// </summary>
 public class StudentsEndpointTests
 {
     private readonly IStudentService mockStudentService = Substitute.For<IStudentService>();
@@ -24,7 +28,6 @@ public class StudentsEndpointTests
         var result = await InvokeGetAllEndpoint(CancellationToken.None);
 
         // Assert
-        // Tester si result est null et si le mock à bien reçu un appel
         Assert.NotNull(result);
         await this.mockStudentService.Received(1).GetAllStudentsAsync(Arg.Any<CancellationToken>());
     }
@@ -40,7 +43,6 @@ public class StudentsEndpointTests
         var result = await InvokeGetAllEndpoint(CancellationToken.None);
 
         // Assert
-        // Tester si result est null et si le mock à bien reçu un appel
         Assert.NotNull(result);
         await this.mockStudentService.Received(1).GetAllStudentsAsync(Arg.Any<CancellationToken>());
     }
@@ -56,7 +58,6 @@ public class StudentsEndpointTests
         var result = await InvokeGetByIdEndpoint(1, CancellationToken.None);
 
         // Assert
-        // Tester si result est null et si le mock à bien reçu un appel
         Assert.NotNull(result);
         await this.mockStudentService.Received(1).GetStudentByIdAsync(1, Arg.Any<CancellationToken>());
     }
@@ -72,7 +73,6 @@ public class StudentsEndpointTests
         var result = await InvokeGetByIdEndpoint(1, CancellationToken.None);
 
         // Assert
-        // Tester si result est null et si le mock à bien reçu un appel
         Assert.NotNull(result);
         await this.mockStudentService.Received(1).GetStudentByIdAsync(1, Arg.Any<CancellationToken>());
     }
@@ -89,7 +89,6 @@ public class StudentsEndpointTests
         var result = await InvokeAddEndpoint(studentToAdd, CancellationToken.None);
 
         // Assert
-        // Tester si result est null et si le mock à bien reçu un appel
         Assert.NotNull(result);
         await this.mockStudentService.Received(1).AddStudentAsync(studentToAdd, Arg.Any<CancellationToken>());
     }
@@ -106,7 +105,6 @@ public class StudentsEndpointTests
         var result = await InvokeUpdateEndpoint(2, studentToUpdate, CancellationToken.None);
 
         // Assert
-        // Tester si result est null et si le mock à bien reçu un appel
         Assert.NotNull(result);
         await this.mockStudentService.Received(1).UpdateStudentAsync(2, studentToUpdate, Arg.Any<CancellationToken>());
     }
@@ -123,7 +121,6 @@ public class StudentsEndpointTests
         var result = await InvokeUpdateEndpoint(2, studentToUpdate, CancellationToken.None);
 
         // Assert
-        // Tester si result est null et si le mock à bien reçu un appel
         Assert.NotNull(result);
         await this.mockStudentService.Received(1).UpdateStudentAsync(2, studentToUpdate, Arg.Any<CancellationToken>());
     }
@@ -140,7 +137,6 @@ public class StudentsEndpointTests
         var result = await InvokeDeleteEndpoint(2, CancellationToken.None);
 
         // Assert
-        // Tester si result est null et si le mock à bien reçu un appel
         Assert.NotNull(result);
         await this.mockStudentService.Received(1).DeleteStudentAsync(2, Arg.Any<CancellationToken>());
     }
@@ -157,7 +153,6 @@ public class StudentsEndpointTests
         var result = await InvokeDeleteEndpoint(2, CancellationToken.None);
 
         // Assert
-        // Tester si result est null et si le mock à bien reçu un appel
         Assert.NotNull(result);
         await this.mockStudentService.Received(1).DeleteStudentAsync(Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
