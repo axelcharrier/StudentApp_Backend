@@ -9,4 +9,5 @@
   <Project Path="StudentApp.Application/StudentApp.Application.csproj" />
   <Project Path="StudentApp.Domain/StudentApp.Domain.csproj" />
   <Project Path="StudentApp.Infrastructure/StudentApp.Infrastructure.csproj" />
+  <Project Path="StudentApp.MinimaleApi.Tests/StudentApp.ApiMinimal.Tests.csproj" Id="36b09a0e-f41f-477e-9373-d2262aaf8326" />
 </Solution>
