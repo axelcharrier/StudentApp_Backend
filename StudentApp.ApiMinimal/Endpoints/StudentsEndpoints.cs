@@ -96,8 +96,8 @@ public static class StudentsEndpoints
             return Results.BadRequest(new { message = "Student cannot be null" });
         try
         {
-            await service.AddStudentAsync(student, ct);
-            return Results.Created();
+            var result = await service.AddStudentAsync(student, ct);
+            return Results.Created($"/students/{result}", result);
         }
         catch (Exception ex)
         {

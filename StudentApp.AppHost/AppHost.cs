@@ -14,4 +14,7 @@ var api = builder.AddProject<StudentApp_ApiMinimal>("Api")
     .WithReference(sqlDatabase)
     .WaitFor(sqlDatabase);
 
-builder.Build().Run();
+var frontend = builder.AddPnpmApp("frontend", "../../ProjetAngular")
+    .WaitFor(api);
+
+await builder.Build().RunAsync();
