@@ -1,10 +1,7 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.1.0">
+﻿<Project Sdk="Aspire.AppHost.Sdk/13.1.0">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <UserSecretsId>dfd99995-2b96-47aa-90d4-b3f5d5c4a9d4</UserSecretsId>
   </PropertyGroup>
 
@@ -12,4 +9,8 @@
     <ProjectReference Include="..\StudentApp.ApiMinimal\StudentApp.ApiMinimal.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.SqlServer" />
+  </ItemGroup>
+	
 </Project>
