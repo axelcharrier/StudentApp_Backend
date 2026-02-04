@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -14,7 +15,12 @@ var api = builder.AddProject<StudentApp_ApiMinimal>("Api")
     .WithReference(sqlDatabase)
     .WaitFor(sqlDatabase);
 
-var frontend = builder.AddPnpmApp("frontend", "../../ProjetAngular")
-    .WaitFor(api);
+builder.AddJavaScriptApp("Frontend", "../../ProjetAngular")
+    .WaitFor(api)
+    .WithReference(api)
+    .WithPnpm(true)
+    .WithRunScript("start")
+    .WithUrl(url: "https://localhost:4200")
+    .WithExternalHttpEndpoints();
 
 await builder.Build().RunAsync();
