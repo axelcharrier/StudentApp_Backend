@@ -5,10 +5,12 @@ using StudentApp.Application.Extensions;
 using StudentApp.Application.Implementations;
 using StudentApp.Infrastructure.Abstractions;
 using StudentApp.Infrastructure.Repositories;
+using StudentApp.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddScoped<IStudentService, StudentService>();
@@ -44,6 +46,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowAngularOrigins");
 
-app.UseHttpsRedirection();
+if (app.Environment.IsProduction())
+    app.UseHttpsRedirection();
 
 await app.RunAsync();
