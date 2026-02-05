@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Identity;
 using Scalar.AspNetCore;
 using StudentApp.ApiMinimal.Endpoints;
 using StudentApp.Application.Abstraction;
 using StudentApp.Application.Extensions;
 using StudentApp.Application.Implementations;
 using StudentApp.Infrastructure.Abstractions;
+using StudentApp.Infrastructure.Persistence;
 using StudentApp.Infrastructure.Repositories;
 using StudentApp.ServiceDefaults;
 
@@ -15,6 +17,12 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+
+// Add Identity services
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<AppDbContext>();
 
 // Cors policy
 builder.Services.AddCors(options =>
@@ -34,6 +42,7 @@ var app = builder.Build();
 #region Méthodes
 
 await StudentsEndpoints.Map(app);
+app.MapIdentityApi<IdentityUser>();
 
 #endregion 
 

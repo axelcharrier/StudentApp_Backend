@@ -1,5 +1,7 @@
 ﻿namespace StudentApp.Infrastructure.Persistence;
 
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using StudentApp.Domain.Entities;
 
@@ -7,7 +9,7 @@ using StudentApp.Domain.Entities;
 /// Represents the database context for the application
 /// </summary>
 /// <param name="options">The options to be used by the context. Cannot be null.</param>
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<IdentityUser>(options)
 {
     /// <summary>
     /// Student DbSet().

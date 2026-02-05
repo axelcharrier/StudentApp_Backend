@@ -23,21 +23,24 @@ public static class StudentsEndpoints
             .Produces(StatusCodes.Status404NotFound)
             .WithName("GetAllStudents")
             .WithDisplayName("Get all students")
-            .WithSummary("Get all students from de database");
+            .WithSummary("Get all students from de database")
+            .RequireAuthorization();
 
         studentsRoute.MapGet("{id}", GetByIdAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .WithName("GetStudentById")
             .WithDisplayName("Get a student by id")
-            .WithSummary("Get a student thanks to his id");
+            .WithSummary("Get a student thanks to his id")
+            .RequireAuthorization();
 
         studentsRoute.MapPost(string.Empty, AddStudentAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .WithName("AddStudent")
             .WithDisplayName("Add a student")
-            .WithSummary("Add a student to the database");
+            .WithSummary("Add a student to the database")
+            .RequireAuthorization();
 
         studentsRoute.MapPut("{id}", UpdateStudentAsync)
             .Produces(StatusCodes.Status200OK)
@@ -45,14 +48,16 @@ public static class StudentsEndpoints
             .Produces(StatusCodes.Status400BadRequest)
             .WithName("UpdateStudent")
             .WithDisplayName("Update a student")
-            .WithSummary("Update a student who already exists");
+            .WithSummary("Update a student who already exists")
+            .RequireAuthorization();
 
         studentsRoute.MapDelete("{id}", DeleteStudentAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .WithName("DeleteStudent")
             .WithDisplayName("Delete a student")
-            .WithSummary("Permanently delete a student to the database");
+            .WithSummary("Permanently delete a student to the database")
+            .RequireAuthorization();
     }
 
     #region Méthodes
