@@ -24,13 +24,16 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddEntityFrameworkStores<AppDbContext>();
 
+
 // Cors policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "AllowAngularOrigins",
                       policy =>
                       {
-                          policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                          policy.WithOrigins("https://localhost:4200");
+                          policy.AllowAnyHeader();
+                          policy.AllowCredentials();
                       });
 });
 
@@ -42,7 +45,7 @@ var app = builder.Build();
 #region Méthodes
 
 await StudentsEndpoints.Map(app);
-app.MapIdentityApi<IdentityUser>();
+await AuthentificationEndpoints.Map(app);
 
 #endregion 
 
