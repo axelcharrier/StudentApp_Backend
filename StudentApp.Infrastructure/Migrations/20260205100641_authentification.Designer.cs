@@ -13,7 +13,7 @@ namespace StudentApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20260205100641_authentification")]
-    partial class authentification
+    partial class Authentification
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
