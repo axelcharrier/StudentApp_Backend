@@ -15,4 +15,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     /// Student DbSet().
     /// </summary>
     public DbSet<Student> Students => this.Set<Student>();
+    public DbSet<AppUser> AppUsers => this.Set<AppUser>();
 }
