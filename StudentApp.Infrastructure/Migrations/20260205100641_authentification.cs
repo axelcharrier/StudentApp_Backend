@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StudentApp.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class authentification : Migration
+    public partial class Authentification : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -11,16 +11,17 @@ public static class AuthentificationEndpoints
 
         authentificationRoute.MapIdentityApi<IdentityUser>();
 
-        authentificationRoute.MapPost("/logout", async (SignInManager<IdentityUser> signInManager,
-            [FromBody] object empty) =>
-                {
-                    if (empty != null)
-                    {
-                        await signInManager.SignOutAsync();
-                        return Results.Ok();
-                    }
-                    return Results.Unauthorized();
-                })
+        authentificationRoute.MapPost("/logout", Logout)
         .RequireAuthorization();
+    }
+
+    private static async Task<IResult> Logout(SignInManager<IdentityUser> signInManager, [FromBody] object empty)
+    {
+        if (empty != null)
+        {
+            await signInManager.SignOutAsync();
+            return Results.Ok();
+        }
+        return Results.Unauthorized();
     }
 }
