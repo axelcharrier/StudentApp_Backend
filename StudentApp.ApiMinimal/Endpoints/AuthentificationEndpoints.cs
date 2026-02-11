@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using StudentApp.Application.Models.Payload;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 
 namespace StudentApp.ApiMinimal.Endpoints;
@@ -12,17 +13,19 @@ public static class AuthentificationEndpoints
 {
     public static async Task Map(WebApplication application)
     {
-        var authentificationRoute = application.MapGroup("/authentification");
+        var authentificationRoute = application.MapGroup("");
 
         //authentificationRoute.MapIdentityApi<IdentityUser>();
 
         authentificationRoute.MapPost("/createAccount", Register)
             .RequireAuthorization();
 
-        authentificationRoute.MapPost("/login", Login)
-            .RequireAuthorization();
+        authentificationRoute.MapPost("/login", Login);
 
         authentificationRoute.MapPost("/logout", Logout)
+            .RequireAuthorization();
+
+        authentificationRoute.MapGet("/manage/info", UserInfos)
             .RequireAuthorization();
     }
 
@@ -103,5 +106,20 @@ public static class AuthentificationEndpoints
         }
 
         return TypedResults.Ok();
+    }
+
+    private record ResponseInfo(string Email, Boolean IsMailConfirmed, string Role);
+    private static async Task<IResult> UserInfos(ClaimsPrincipal claimsPrincipal, [FromServices] UserManager<IdentityUser> userManager, [FromServices] RoleManager<IdentityRole> roleManager)
+    {
+        if (await userManager.GetUserAsync(claimsPrincipal) is not { } user)
+        {
+            return TypedResults.NotFound();
+        }
+
+        var email = await userManager.GetEmailAsync(user) ?? throw new NotSupportedException("Users must have an email.");
+        var isEmailConfirmed = await userManager.IsEmailConfirmedAsync(user);
+        var roles = await userManager.GetRolesAsync(user);
+
+        return Results.Ok(new ResponseInfo(email, isEmailConfirmed, roles[0]));
     }
 }
