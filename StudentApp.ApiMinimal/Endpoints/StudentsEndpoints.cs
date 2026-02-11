@@ -1,5 +1,6 @@
 ﻿namespace StudentApp.ApiMinimal.Endpoints;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudentApp.Application.Abstraction;
 using StudentApp.Application.Models.Dto;
@@ -73,6 +74,7 @@ public static class StudentsEndpoints
         return Results.Ok(student);
     }
 
+    [Authorize(Roles = "Teacher")]
     private static async Task<IResult> UpdateStudentAsync(
                 CancellationToken ct,
                 [FromRoute] int id,
@@ -92,6 +94,7 @@ public static class StudentsEndpoints
         }
     }
 
+    [Authorize(Roles = "Teacher")]
     private static async Task<IResult> AddStudentAsync(
         CancellationToken ct,
         [FromBody] StudentDto student,
@@ -110,6 +113,7 @@ public static class StudentsEndpoints
         }
     }
 
+    [Authorize(Roles = "Teacher")]
     private static async Task<IResult> DeleteStudentAsync(
         CancellationToken ct,
         [FromRoute] int id,
