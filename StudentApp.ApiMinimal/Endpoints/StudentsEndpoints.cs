@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using StudentApp.Application.Abstraction;
-using StudentApp.Application.Models;
+using StudentApp.Application.Models.Dto;
 using System.Threading.Tasks;
 
 
