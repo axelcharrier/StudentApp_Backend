@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using StudentApp.Application.Models.Payload;
@@ -14,10 +15,11 @@ public static class AuthentificationEndpoints
 
         authentificationRoute.MapIdentityApi<IdentityUser>();
 
-        authentificationRoute.MapPost("/register", Register);
+        authentificationRoute.MapPost("/createAccount", Register)
+            .RequireAuthorization();
 
         authentificationRoute.MapPost("/logout", Logout)
-        .RequireAuthorization();
+            .RequireAuthorization();
     }
 
     private static async Task<IResult> Logout(SignInManager<IdentityUser> signInManager, [FromBody] object empty)
@@ -30,24 +32,25 @@ public static class AuthentificationEndpoints
         return Results.Unauthorized();
     }
 
-    private static async Task<IResult> Register([FromBody] UserPayload registration, HttpContext context, [FromServices] IServiceProvider sp)
+    [Authorize(Roles = "Teacher")]
+    private static async Task<IResult> Register(
+        [FromBody] UserPayload registration,
+        HttpContext context,
+        [FromServices] RoleManager<IdentityRole> roleManager,
+        [FromServices] UserManager<IdentityUser> userManager,
+        [FromServices] IUserStore<IdentityUser> userStore)
     {
         string regexEmailPatern = """^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$""";
 
-        var userManager = sp.GetRequiredService<UserManager<IdentityUser>>();
-        var roleManager = sp.GetRequiredService<RoleManager<IdentityRole>>();
-
-        var userStore = sp.GetRequiredService<IUserStore<IdentityUser>>();
         var emailStore = (IUserEmailStore<IdentityUser>)userStore;
         var email = registration.Email;
-        var roleName = registration.RoleName;
 
         if (string.IsNullOrEmpty(email) || !Regex.IsMatch(email, regexEmailPatern))
         {
             return Results.BadRequest(IdentityResult.Failed(userManager.ErrorDescriber.InvalidEmail(email)));
         }
 
-        if (!await roleManager.RoleExistsAsync(roleName))
+        if (!await roleManager.RoleExistsAsync(registration.RoleName))
         {
             return Results.BadRequest("this role doesn't exists");
         }
@@ -57,7 +60,7 @@ public static class AuthentificationEndpoints
         await userStore.SetUserNameAsync(user, email, CancellationToken.None);
         await emailStore.SetEmailAsync(user, email, CancellationToken.None);
         var result = await userManager.CreateAsync(user, registration.Password);
-        var addingRole = await userManager.AddToRoleAsync(user, roleName);
+        var addingRole = await userManager.AddToRoleAsync(user, registration.RoleName);
 
         if (!result.Succeeded || !addingRole.Succeeded)
         {
