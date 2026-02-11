@@ -22,6 +22,7 @@ builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddAuthorization();
 
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 
 
