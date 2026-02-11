@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using StudentApp.Application.Models.Payload;
@@ -13,13 +14,47 @@ public static class AuthentificationEndpoints
     {
         var authentificationRoute = application.MapGroup("/authentification");
 
-        authentificationRoute.MapIdentityApi<IdentityUser>();
+        //authentificationRoute.MapIdentityApi<IdentityUser>();
 
         authentificationRoute.MapPost("/createAccount", Register)
             .RequireAuthorization();
 
+        authentificationRoute.MapPost("/login", Login)
+            .RequireAuthorization();
+
         authentificationRoute.MapPost("/logout", Logout)
             .RequireAuthorization();
+    }
+
+    private static async Task<IResult> Login([FromBody] LoginRequest login, [FromQuery] bool? useCookies, [FromQuery] bool? useSessionCookies, [FromServices] IServiceProvider sp)
+    {
+        var signInManager = sp.GetRequiredService<SignInManager<IdentityUser>>();
+
+        var useCookieScheme = (useCookies == true) || (useSessionCookies == true);
+        var isPersistent = (useCookies == true) && (useSessionCookies != true);
+        signInManager.AuthenticationScheme = useCookieScheme ? IdentityConstants.ApplicationScheme : IdentityConstants.BearerScheme;
+
+        var result = await signInManager.PasswordSignInAsync(login.Email, login.Password, isPersistent, lockoutOnFailure: true);
+
+        if (result.RequiresTwoFactor)
+        {
+            if (!string.IsNullOrEmpty(login.TwoFactorCode))
+            {
+                result = await signInManager.TwoFactorAuthenticatorSignInAsync(login.TwoFactorCode, isPersistent, rememberClient: isPersistent);
+            }
+            else if (!string.IsNullOrEmpty(login.TwoFactorRecoveryCode))
+            {
+                result = await signInManager.TwoFactorRecoveryCodeSignInAsync(login.TwoFactorRecoveryCode);
+            }
+        }
+
+        if (!result.Succeeded)
+        {
+            return TypedResults.Problem(result.ToString(), statusCode: StatusCodes.Status401Unauthorized);
+        }
+
+        // The signInManager already produced the needed response in the form of a cookie or bearer token.
+        return TypedResults.Empty;
     }
 
     private static async Task<IResult> Logout(SignInManager<IdentityUser> signInManager, [FromBody] object empty)
