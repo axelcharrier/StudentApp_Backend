@@ -1,6 +1,6 @@
 ﻿namespace StudentApp.Application.Models.Payload;
 
-public sealed class UserPayload
+public sealed record UserPayload
 {
     public required string Email { get; set; }
     public required string Password { get; set; }
