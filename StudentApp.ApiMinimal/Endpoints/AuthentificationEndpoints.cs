@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using StudentApp.ApiMinimal.Policies;
 using StudentApp.Application.Models.Payload;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
@@ -13,26 +14,20 @@ public static class AuthentificationEndpoints
 {
     public static async Task Map(WebApplication application)
     {
-        var authentificationRoute = application.MapGroup("");
+        application.MapPost("/createAccount", Register)
+            .RequireAuthorization(UserPolicy.AllowTeacher);
 
-        //authentificationRoute.MapIdentityApi<IdentityUser>();
+        application.MapPost("/login", Login);
 
-        authentificationRoute.MapPost("/createAccount", Register)
-            .RequireAuthorization();
+        application.MapPost("/logout", Logout)
+            .RequireAuthorization(UserPolicy.AllowTeacher);
 
-        authentificationRoute.MapPost("/login", Login);
-
-        authentificationRoute.MapPost("/logout", Logout)
-            .RequireAuthorization();
-
-        authentificationRoute.MapGet("/manage/info", UserInfos)
+        application.MapGet("/manage/info", UserInfos)
             .RequireAuthorization();
     }
 
-    private static async Task<IResult> Login([FromBody] LoginRequest login, [FromQuery] bool? useCookies, [FromQuery] bool? useSessionCookies, [FromServices] IServiceProvider sp)
+    private static async Task<IResult> Login([FromBody] LoginRequest login, [FromQuery] bool? useCookies, [FromQuery] bool? useSessionCookies, [FromServices] SignInManager<IdentityUser> signInManager)
     {
-        var signInManager = sp.GetRequiredService<SignInManager<IdentityUser>>();
-
         var useCookieScheme = (useCookies == true) || (useSessionCookies == true);
         var isPersistent = (useCookies == true) && (useSessionCookies != true);
         signInManager.AuthenticationScheme = useCookieScheme ? IdentityConstants.ApplicationScheme : IdentityConstants.BearerScheme;
@@ -78,7 +73,7 @@ public static class AuthentificationEndpoints
         [FromServices] UserManager<IdentityUser> userManager,
         [FromServices] IUserStore<IdentityUser> userStore)
     {
-        string regexEmailPatern = """^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$""";
+        string regexEmailPatern = """^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$""";
 
         var emailStore = (IUserEmailStore<IdentityUser>)userStore;
         var email = registration.Email;
@@ -108,8 +103,8 @@ public static class AuthentificationEndpoints
         return TypedResults.Ok();
     }
 
-    private record ResponseInfo(string Email, Boolean IsMailConfirmed, string Role);
-    private static async Task<IResult> UserInfos(ClaimsPrincipal claimsPrincipal, [FromServices] UserManager<IdentityUser> userManager, [FromServices] RoleManager<IdentityRole> roleManager)
+    private sealed record ResponseInfo(string Email, bool IsMailConfirmed, string Role);
+    private static async Task<IResult> UserInfos(ClaimsPrincipal claimsPrincipal, [FromServices] UserManager<IdentityUser> userManager)
     {
         if (await userManager.GetUserAsync(claimsPrincipal) is not { } user)
         {

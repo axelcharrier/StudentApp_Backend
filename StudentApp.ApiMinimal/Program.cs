@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Scalar.AspNetCore;
 using StudentApp.ApiMinimal.Endpoints;
+using StudentApp.ApiMinimal.Policies;
 using StudentApp.Application.Abstraction;
 using StudentApp.Application.Extensions;
 using StudentApp.Application.Implementations;
@@ -19,7 +20,11 @@ builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 
 // Add Identity services
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(UserPolicy.AllowTeacher,
+        policy => policy.RequireRole(UserPolicy.TeacherRole));
+});
 
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddRoles<IdentityRole>()

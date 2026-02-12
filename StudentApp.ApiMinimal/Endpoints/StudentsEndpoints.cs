@@ -1,7 +1,8 @@
 ﻿namespace StudentApp.ApiMinimal.Endpoints;
 
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using StudentApp.ApiMinimal.Policies;
 using StudentApp.Application.Abstraction;
 using StudentApp.Application.Models.Dto;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ public static class StudentsEndpoints
     /// </summary>
     /// <param name="application">The web application to which the student endpoints will be mapped. Must not be null.</param>
     /// <returns>A task that represents the asynchronous operation of mapping the student endpoints.</returns>
+
     public static async Task Map(WebApplication application)
     {
         var studentsRoute = application.MapGroup("/students");
@@ -38,27 +40,27 @@ public static class StudentsEndpoints
         studentsRoute.MapPost(string.Empty, AddStudentAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
+            .RequireAuthorization(UserPolicy.AllowTeacher)
             .WithName("AddStudent")
             .WithDisplayName("Add a student")
-            .WithSummary("Add a student to the database")
-            .RequireAuthorization();
+            .WithSummary("Add a student to the database");
 
         studentsRoute.MapPut("{id}", UpdateStudentAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status400BadRequest)
+            .RequireAuthorization(UserPolicy.AllowTeacher)
             .WithName("UpdateStudent")
             .WithDisplayName("Update a student")
-            .WithSummary("Update a student who already exists")
-            .RequireAuthorization();
+            .WithSummary("Update a student who already exists");
 
         studentsRoute.MapDelete("{id}", DeleteStudentAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
+            .RequireAuthorization(UserPolicy.AllowTeacher)
             .WithName("DeleteStudent")
             .WithDisplayName("Delete a student")
-            .WithSummary("Permanently delete a student to the database")
-            .RequireAuthorization();
+            .WithSummary("Permanently delete a student to the database");
     }
 
     #region Méthodes
@@ -74,7 +76,6 @@ public static class StudentsEndpoints
         return Results.Ok(student);
     }
 
-    [Authorize(Roles = "Teacher")]
     private static async Task<IResult> UpdateStudentAsync(
                 CancellationToken ct,
                 [FromRoute] int id,
@@ -94,7 +95,6 @@ public static class StudentsEndpoints
         }
     }
 
-    [Authorize(Roles = "Teacher")]
     private static async Task<IResult> AddStudentAsync(
         CancellationToken ct,
         [FromBody] StudentDto student,
@@ -113,7 +113,6 @@ public static class StudentsEndpoints
         }
     }
 
-    [Authorize(Roles = "Teacher")]
     private static async Task<IResult> DeleteStudentAsync(
         CancellationToken ct,
         [FromRoute] int id,
@@ -123,9 +122,6 @@ public static class StudentsEndpoints
             return Results.BadRequest("Cannot found student with this Id");
 
         return Results.Ok(await service.DeleteStudentAsync(id, ct));
-
-
-
     }
 
     #endregion
