@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using StudentApp.ApiMinimal.Models;
 using StudentApp.ApiMinimal.Policies;
 using StudentApp.Application.Models.Payload;
 using System.Security.Claims;
@@ -14,8 +15,6 @@ public static class AuthentificationEndpoints
 {
     public static async Task Map(WebApplication application)
     {
-        application.MapIdentityApi<IdentityUser>();
-
         application.MapPost("/createAccount", Register)
             .RequireAuthorization(UserPolicy.AllowTeacher);
 
@@ -108,7 +107,6 @@ public static class AuthentificationEndpoints
         return TypedResults.Ok();
     }
 
-    private sealed record ResponseInfo(string Email, bool IsMailConfirmed, string Role);
     private static async Task<IResult> UserInfos(ClaimsPrincipal claimsPrincipal, [FromServices] UserManager<IdentityUser> userManager)
     {
         if (await userManager.GetUserAsync(claimsPrincipal) is not { } user)
@@ -123,18 +121,10 @@ public static class AuthentificationEndpoints
         return Results.Ok(new ResponseInfo(email, isEmailConfirmed, roles[0]));
     }
 
-    public sealed record InfoRequest
-    {
-        public string? NewEmail { get; init; }
-        public string? NewPassword { get; init; }
-        public string? OldPassword { get; init; }
-        public string? Role { get; set; }
-    }
     private static async Task<IResult> EditUserInfos(
         ClaimsPrincipal claimsPrincipal,
-        [FromBody] InfoRequest infoRequest,
-        [FromServices] UserManager<IdentityUser> userManager,
-        [FromServices] RoleManager<IdentityRole> roleManager)
+        [FromBody] InfoRequestCustom infoRequest,
+        [FromServices] UserManager<IdentityUser> userManager)
     {
         if (await userManager.GetUserAsync(claimsPrincipal) is not { } user)
         {
@@ -147,6 +137,10 @@ public static class AuthentificationEndpoints
             return Results.BadRequest(IdentityResult.Failed(userManager.ErrorDescriber.InvalidEmail(infoRequest.NewEmail)));
         }
         user.Email = infoRequest.NewEmail;
+        user.UserName = infoRequest.NewEmail;
+        user.NormalizedUserName = infoRequest.NewEmail;
+        user.NormalizedEmail = infoRequest.NewEmail;
+
         await userManager.UpdateAsync(user);
 
         if (!string.IsNullOrEmpty(infoRequest.NewPassword))
@@ -162,13 +156,6 @@ public static class AuthentificationEndpoints
                 return Results.BadRequest(changePasswordResult);
             }
         }
-
-        if (!string.IsNullOrEmpty(infoRequest.Role) && (await roleManager.FindByNameAsync(infoRequest.Role) is null))
-        {
-            return Results.BadRequest();
-        }
-        await userManager.AddToRoleAsync(user, infoRequest.Role);
-        await userManager.RemoveFromRoleAsync(user, infoRequest.Role);
 
         return TypedResults.Ok((user, userManager));
     }
