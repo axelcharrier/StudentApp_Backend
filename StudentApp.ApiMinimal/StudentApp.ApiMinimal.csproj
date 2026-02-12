@@ -18,4 +18,8 @@
     <ProjectReference Include="..\StudentApp.ServiceDefaults\StudentApp.ServiceDefaults.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

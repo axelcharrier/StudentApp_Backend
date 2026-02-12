@@ -14,6 +14,8 @@ public static class AuthentificationEndpoints
 {
     public static async Task Map(WebApplication application)
     {
+        application.MapIdentityApi<IdentityUser>();
+
         application.MapPost("/createAccount", Register)
             .RequireAuthorization(UserPolicy.AllowTeacher);
 
@@ -24,6 +26,9 @@ public static class AuthentificationEndpoints
 
         application.MapGet("/manage/info", UserInfos)
             .RequireAuthorization();
+
+        application.MapPost("/manage/info", EditUserInfos)
+            .RequireAuthorization(UserPolicy.AllowTeacher);
     }
 
     private static async Task<IResult> Login([FromBody] LoginRequest login, [FromQuery] bool? useCookies, [FromQuery] bool? useSessionCookies, [FromServices] SignInManager<IdentityUser> signInManager)
@@ -116,5 +121,55 @@ public static class AuthentificationEndpoints
         var roles = await userManager.GetRolesAsync(user);
 
         return Results.Ok(new ResponseInfo(email, isEmailConfirmed, roles[0]));
+    }
+
+    public sealed record InfoRequest
+    {
+        public string? NewEmail { get; init; }
+        public string? NewPassword { get; init; }
+        public string? OldPassword { get; init; }
+        public string? Role { get; set; }
+    }
+    private static async Task<IResult> EditUserInfos(
+        ClaimsPrincipal claimsPrincipal,
+        [FromBody] InfoRequest infoRequest,
+        [FromServices] UserManager<IdentityUser> userManager,
+        [FromServices] RoleManager<IdentityRole> roleManager)
+    {
+        if (await userManager.GetUserAsync(claimsPrincipal) is not { } user)
+        {
+            return TypedResults.NotFound();
+        }
+        string regexEmailPatern = """^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$""";
+
+        if (!string.IsNullOrEmpty(infoRequest.NewEmail) && !Regex.IsMatch(infoRequest.NewEmail, regexEmailPatern))
+        {
+            return Results.BadRequest(IdentityResult.Failed(userManager.ErrorDescriber.InvalidEmail(infoRequest.NewEmail)));
+        }
+        user.Email = infoRequest.NewEmail;
+        await userManager.UpdateAsync(user);
+
+        if (!string.IsNullOrEmpty(infoRequest.NewPassword))
+        {
+            if (string.IsNullOrEmpty(infoRequest.OldPassword))
+            {
+                return Results.BadRequest("OldPasswordRequired");
+            }
+
+            var changePasswordResult = await userManager.ChangePasswordAsync(user, infoRequest.OldPassword, infoRequest.NewPassword);
+            if (!changePasswordResult.Succeeded)
+            {
+                return Results.BadRequest(changePasswordResult);
+            }
+        }
+
+        if (!string.IsNullOrEmpty(infoRequest.Role) && (await roleManager.FindByNameAsync(infoRequest.Role) is null))
+        {
+            return Results.BadRequest();
+        }
+        await userManager.AddToRoleAsync(user, infoRequest.Role);
+        await userManager.RemoveFromRoleAsync(user, infoRequest.Role);
+
+        return TypedResults.Ok((user, userManager));
     }
 }
