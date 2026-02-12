@@ -1,7 +1,7 @@
 ﻿namespace StudentApp.Application.Implementations;
 
 using StudentApp.Application.Abstraction;
-using StudentApp.Application.Models;
+using StudentApp.Application.Models.Dto;
 using StudentApp.Domain.Entities;
 using StudentApp.Infrastructure.Abstractions;
 

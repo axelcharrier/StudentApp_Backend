@@ -5,7 +5,7 @@ using NSubstitute;
 using NSubstitute.ReceivedExtensions;
 using StudentApp.ApiMinimal.Endpoints;
 using StudentApp.Application.Abstraction;
-using StudentApp.Application.Models;
+using StudentApp.Application.Models.Dto;
 using System.Reflection;
 using System.Threading;
 

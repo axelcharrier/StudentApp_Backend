@@ -1,4 +1,4 @@
-﻿using StudentApp.Application.Models;
+﻿using StudentApp.Application.Models.Dto;
 
 namespace StudentApp.Application.Abstraction;
 
