@@ -15,8 +15,8 @@ public static class AuthentificationEndpoints
 {
     public static async Task Map(WebApplication application)
     {
-        application.MapPost("/createAccount", Register)
-            .RequireAuthorization(UserPolicy.AllowTeacher);
+        application.MapPost("/createAccount", Register);
+        //.RequireAuthorization(UserPolicy.AllowTeacher);
 
         application.MapPost("/login", Login);
 
@@ -136,12 +136,16 @@ public static class AuthentificationEndpoints
         {
             return Results.BadRequest(IdentityResult.Failed(userManager.ErrorDescriber.InvalidEmail(infoRequest.NewEmail)));
         }
-        user.Email = infoRequest.NewEmail;
-        user.UserName = infoRequest.NewEmail;
-        user.NormalizedUserName = infoRequest.NewEmail;
-        user.NormalizedEmail = infoRequest.NewEmail;
 
-        await userManager.UpdateAsync(user);
+        if (!string.IsNullOrEmpty(infoRequest.NewEmail))
+        {
+            user.Email = infoRequest.NewEmail;
+            user.UserName = infoRequest.NewEmail;
+            user.NormalizedUserName = infoRequest.NewEmail;
+            user.NormalizedEmail = infoRequest.NewEmail;
+
+            await userManager.UpdateAsync(user);
+        }
 
         if (!string.IsNullOrEmpty(infoRequest.NewPassword))
         {
