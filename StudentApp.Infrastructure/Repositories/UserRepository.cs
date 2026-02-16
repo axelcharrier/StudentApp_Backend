@@ -28,4 +28,19 @@ public class UserRepository(AppDbContext context) : IUserRepository
 
         return users;
     }
+
+    public async Task<User> GetUserByMailAsync(string mail, CancellationToken ct)
+    {
+        var user = await context.Users.Where(user => user.UserName == mail).Select(user => new User
+        {
+            Mail = user.UserName!,
+            IsMailConfirmed = user.EmailConfirmed,
+            Role = context.Roles.FirstOrDefault(role =>
+                role.Id == context.UserRoles.FirstOrDefault(userRole =>
+                    userRole.UserId == user.Id)!.RoleId)!
+                .Name!
+        }).FirstOrDefaultAsync(cancellationToken: ct);
+
+        return user;
+    }
 }

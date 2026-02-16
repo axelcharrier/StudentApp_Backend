@@ -10,4 +10,5 @@ using StudentApp.Domain.Entities;
 public interface IUserRepository
 {
     Task<User[]> GetAllUsersAsync(CancellationToken ct);
+    Task<User> GetUserByMailAsync(string mail, CancellationToken ct);
 }

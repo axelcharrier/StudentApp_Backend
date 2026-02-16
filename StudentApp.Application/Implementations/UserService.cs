@@ -16,4 +16,10 @@ public sealed class UserService(IUserRepository userRepository) : IUserService
         var users = await userRepository.GetAllUsersAsync(ct);
         return [.. users.Select(user => new UserDto(user.Mail, user.IsMailConfirmed, user.Role))];
     }
+
+    public async Task<UserDto> GetUserByMailAsync(string mail, CancellationToken ct)
+    {
+        var user = await userRepository.GetUserByMailAsync(mail, ct);
+        return new UserDto(user.Mail, user.IsMailConfirmed, user.Role);
+    }
 }

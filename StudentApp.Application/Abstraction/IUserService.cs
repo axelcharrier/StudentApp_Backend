@@ -8,4 +8,5 @@ namespace StudentApp.Application.Abstraction;
 public interface IUserService
 {
     Task<UserDto[]> GetAllUsersAsync(CancellationToken ct);
+    Task<UserDto> GetUserByMailAsync(string mail, CancellationToken ct);
 }
