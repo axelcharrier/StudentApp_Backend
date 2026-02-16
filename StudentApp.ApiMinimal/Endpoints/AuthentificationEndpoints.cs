@@ -16,17 +16,19 @@ public static class AuthentificationEndpoints
     public static async Task Map(WebApplication application)
     {
         application.MapPost("/createAccount", Register)
-        .RequireAuthorization(UserPolicy.AllowTeacher);
+            .RequireAuthorization(UserPolicy.AllowTeacher);
 
         application.MapPost("/login", Login);
 
         application.MapPost("/logout", Logout)
             .RequireAuthorization(UserPolicy.AllowTeacher);
 
-        application.MapGet("/manage/info", UserInfos)
+        var manage = application.MapGroup("/manage/info");
+
+        manage.MapGet("", UserInfos)
             .RequireAuthorization();
 
-        application.MapPost("/manage/info", EditUserInfos)
+        manage.MapPost("", EditUserInfos)
             .RequireAuthorization(UserPolicy.AllowTeacher);
     }
 
@@ -41,19 +43,13 @@ public static class AuthentificationEndpoints
         if (result.RequiresTwoFactor)
         {
             if (!string.IsNullOrEmpty(login.TwoFactorCode))
-            {
                 result = await signInManager.TwoFactorAuthenticatorSignInAsync(login.TwoFactorCode, isPersistent, rememberClient: isPersistent);
-            }
             else if (!string.IsNullOrEmpty(login.TwoFactorRecoveryCode))
-            {
                 result = await signInManager.TwoFactorRecoveryCodeSignInAsync(login.TwoFactorRecoveryCode);
-            }
         }
 
         if (!result.Succeeded)
-        {
             return TypedResults.Problem(result.ToString(), statusCode: StatusCodes.Status401Unauthorized);
-        }
 
         // The signInManager already produced the needed response in the form of a cookie or bearer token.
         return TypedResults.Empty;
@@ -83,14 +79,10 @@ public static class AuthentificationEndpoints
         var email = registration.Email;
 
         if (string.IsNullOrEmpty(email) || !Regex.IsMatch(email, regexEmailPatern))
-        {
             return Results.BadRequest(IdentityResult.Failed(userManager.ErrorDescriber.InvalidEmail(email)));
-        }
 
         if (!await roleManager.RoleExistsAsync(registration.RoleName))
-        {
             return Results.BadRequest("this role doesn't exists");
-        }
 
         var user = new IdentityUser();
 
@@ -100,9 +92,7 @@ public static class AuthentificationEndpoints
         var addingRole = await userManager.AddToRoleAsync(user, registration.RoleName);
 
         if (!result.Succeeded || !addingRole.Succeeded)
-        {
             return Results.BadRequest(result);
-        }
 
         return TypedResults.Ok();
     }
@@ -110,9 +100,7 @@ public static class AuthentificationEndpoints
     private static async Task<IResult> UserInfos(ClaimsPrincipal claimsPrincipal, [FromServices] UserManager<IdentityUser> userManager)
     {
         if (await userManager.GetUserAsync(claimsPrincipal) is not { } user)
-        {
             return TypedResults.NotFound();
-        }
 
         var email = await userManager.GetEmailAsync(user) ?? throw new NotSupportedException("Users must have an email.");
         var isEmailConfirmed = await userManager.IsEmailConfirmedAsync(user);
@@ -127,15 +115,11 @@ public static class AuthentificationEndpoints
         [FromServices] UserManager<IdentityUser> userManager)
     {
         if (await userManager.GetUserAsync(claimsPrincipal) is not { } user)
-        {
             return TypedResults.NotFound();
-        }
         string regexEmailPatern = """^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$""";
 
         if (!string.IsNullOrEmpty(infoRequest.NewEmail) && !Regex.IsMatch(infoRequest.NewEmail, regexEmailPatern))
-        {
             return Results.BadRequest(IdentityResult.Failed(userManager.ErrorDescriber.InvalidEmail(infoRequest.NewEmail)));
-        }
 
         if (!string.IsNullOrEmpty(infoRequest.NewEmail))
         {
@@ -150,15 +134,11 @@ public static class AuthentificationEndpoints
         if (!string.IsNullOrEmpty(infoRequest.NewPassword))
         {
             if (string.IsNullOrEmpty(infoRequest.OldPassword))
-            {
                 return Results.BadRequest("OldPasswordRequired");
-            }
 
             var changePasswordResult = await userManager.ChangePasswordAsync(user, infoRequest.OldPassword, infoRequest.NewPassword);
             if (!changePasswordResult.Succeeded)
-            {
                 return Results.BadRequest(changePasswordResult);
-            }
         }
 
         return TypedResults.Ok((user, userManager));
