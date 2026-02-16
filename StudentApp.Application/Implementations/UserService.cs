@@ -25,9 +25,9 @@ public sealed class UserService(IUserRepository userRepository) : IUserService
         return new UserDto(user.Mail, user.IsMailConfirmed, user.Role);
     }
 
-    public async Task<UserDto?> UpdateUserAsync(User user, RoleManager<IdentityRole> roleManager, CancellationToken ct)
+    public async Task<UserDto?> UpdateUserAsync(UserDto user, RoleManager<IdentityRole> roleManager, CancellationToken ct)
     {
-        var userToUpdate = await userRepository.UpdateUserAsync(user, roleManager, ct);
+        var userToUpdate = await userRepository.UpdateUserAsync(new User() { Mail = user.Mail, IsMailConfirmed = user.IsMailConfirmed, Role = user.Role }, roleManager, ct);
         if (userToUpdate is not null)
             return new UserDto(userToUpdate.Mail, userToUpdate.IsMailConfirmed, userToUpdate.Role);
         return null;

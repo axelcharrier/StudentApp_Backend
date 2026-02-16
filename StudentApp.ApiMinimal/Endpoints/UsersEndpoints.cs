@@ -2,8 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using StudentApp.ApiMinimal.Policies;
 using StudentApp.Application.Abstraction;
-using StudentApp.Application.Implementations;
-using StudentApp.Domain.Entities;
+using StudentApp.Application.Models.Dto;
 
 namespace StudentApp.ApiMinimal.Endpoints;
 
@@ -45,17 +44,17 @@ public static class UsersEndpoints
         return Results.Ok(user);
     }
 
-    private static async Task<IResult> UpdateUserAsync([FromQuery] string mail, [FromBody] User user, [FromServices] IUserService userService, [FromServices] RoleManager<IdentityRole> roleManager, CancellationToken ct)
+    private static async Task<IResult> UpdateUserAsync([FromQuery] string mail, [FromBody] UserDto user, [FromServices] IUserService userService, [FromServices] RoleManager<IdentityRole> roleManager, CancellationToken ct)
     {
-        if (userService.GetUserByMailAsync(mail, ct) is null)
+        if (await userService.GetUserByMailAsync(mail, ct) is null)
             return Results.NotFound(mail);
 
-        var userUpdated = userService.UpdateUserAsync(user, roleManager, ct);
+        var userUpdated = await userService.UpdateUserAsync(user, roleManager, ct);
 
         return Results.Ok(userUpdated);
     }
 
-    private static async Task<IResult> DeleteUserAsync([FromQuery] string mail, [FromServices] UserService userService, CancellationToken ct)
+    private static async Task<IResult> DeleteUserAsync([FromQuery] string mail, [FromServices] IUserService userService, CancellationToken ct)
     {
         if (userService.GetUserByMailAsync(mail, ct) is null)
             return Results.NotFound(mail);

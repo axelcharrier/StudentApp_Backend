@@ -58,7 +58,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
         userRoleToUpdate!.RoleId = await roleManager.GetRoleIdAsync(await context.Roles.Where(role => role.Name == user.Role).FirstOrDefaultAsync(ct));
 
         context.Users.Update(userToUpdate!);
-        context.Update(userRoleToUpdate);
+        context.UserRoles.Update(userRoleToUpdate);
 
         await context.SaveChangesAsync(ct).ConfigureAwait(false);
 
@@ -77,8 +77,8 @@ public class UserRepository(AppDbContext context) : IUserRepository
 
     public async Task<bool> DeleteUserAsync(string mail, UserManager<IdentityUser> userManager, CancellationToken ct)
     {
-        if (await context.Users.Where(user => user.UserName == mail).FirstOrDefaultAsync(ct) is not null
-            {
+        if (await context.Users.Where(user => user.UserName == mail).FirstOrDefaultAsync(ct) is not null)
+        {
             await userManager.DeleteAsync(new IdentityUser(mail));
             await context.SaveChangesAsync(ct).ConfigureAwait(false);
             return true;
