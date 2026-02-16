@@ -7,6 +7,14 @@ using StudentApp.Domain.Entities;
 
 namespace StudentApp.ApiMinimal.Endpoints;
 
+/// <summary>
+/// Provides endpoint mappings for user management operations, including retrieving, updating, and deleting users.
+/// Intended for integration with ASP.NET Core minimal APIs.
+/// </summary>
+/// <remarks>All endpoints require authorization with the teacher policy. The class defines routes for
+/// user-related actions and should be used to register these endpoints within a web application during startup.
+/// Endpoints are mapped for retrieving all users, retrieving a user by email, updating a user, and deleting a
+/// user.</remarks>
 public static class UsersEndpoints
 {
     public static async Task Map(WebApplication application)
