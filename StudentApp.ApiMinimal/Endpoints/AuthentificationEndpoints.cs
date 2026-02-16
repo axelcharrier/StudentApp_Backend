@@ -15,8 +15,8 @@ public static class AuthentificationEndpoints
 {
     public static async Task Map(WebApplication application)
     {
-        application.MapPost("/createAccount", Register);
-        //.RequireAuthorization(UserPolicy.AllowTeacher);
+        application.MapPost("/createAccount", Register)
+        .RequireAuthorization(UserPolicy.AllowTeacher);
 
         application.MapPost("/login", Login);
 
