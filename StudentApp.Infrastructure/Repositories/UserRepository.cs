@@ -74,4 +74,18 @@ public class UserRepository(AppDbContext context) : IUserRepository
 
         return userResponse ?? null;
     }
+
+    public async Task<bool> DeleteUserAsync(string mail, UserManager<IdentityUser> userManager, CancellationToken ct)
+    {
+        if (await context.Users.Where(user => user.UserName == mail).FirstOrDefaultAsync(ct) is not null
+            {
+            await userManager.DeleteAsync(new IdentityUser(mail));
+            await context.SaveChangesAsync(ct).ConfigureAwait(false);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

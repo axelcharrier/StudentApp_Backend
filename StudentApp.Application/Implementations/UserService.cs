@@ -32,4 +32,12 @@ public sealed class UserService(IUserRepository userRepository) : IUserService
             return new UserDto(userToUpdate.Mail, userToUpdate.IsMailConfirmed, userToUpdate.Role);
         return null;
     }
+
+    public async Task<bool> DeleteUserAsync(string mail, UserManager<IdentityUser> userManager, CancellationToken ct)
+    {
+        var operationSuccess = await userRepository.DeleteUserAsync(mail, userManager, ct);
+        if (!operationSuccess)
+            return false;
+        return true;
+    }
 }

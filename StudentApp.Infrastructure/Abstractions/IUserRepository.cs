@@ -9,6 +9,7 @@ using StudentApp.Domain.Entities;
 /// Methods are asynchronous and support cancellation via a <see cref="CancellationToken"/>.</remarks>
 public interface IUserRepository
 {
+    Task<bool> DeleteUserAsync(string mail, Microsoft.AspNetCore.Identity.UserManager<Microsoft.AspNetCore.Identity.IdentityUser> userManager, CancellationToken ct);
     Task<User?> UpdateUserAsync(User user, Microsoft.AspNetCore.Identity.RoleManager<Microsoft.AspNetCore.Identity.IdentityRole> roleManager, CancellationToken ct);
     Task<User[]> GetAllUsersAsync(CancellationToken ct);
     Task<User> GetUserByMailAsync(string mail, CancellationToken ct);

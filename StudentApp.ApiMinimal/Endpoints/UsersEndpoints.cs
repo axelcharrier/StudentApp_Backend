@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using StudentApp.ApiMinimal.Policies;
 using StudentApp.Application.Abstraction;
+using StudentApp.Application.Implementations;
 using StudentApp.Domain.Entities;
 
 namespace StudentApp.ApiMinimal.Endpoints;
@@ -17,6 +18,9 @@ public static class UsersEndpoints
             .RequireAuthorization(UserPolicy.AllowTeacher);
 
         application.MapPut(string.Empty, UpdateUserAsync)
+            .RequireAuthorization(UserPolicy.AllowTeacher);
+
+        application.MapDelete(string.Empty, DeleteUserAsync)
             .RequireAuthorization(UserPolicy.AllowTeacher);
     }
     private static async Task<IResult> GetAllUsersAsync(CancellationToken ct, [FromServices] IUserService userService)
@@ -41,5 +45,12 @@ public static class UsersEndpoints
         var userUpdated = userService.UpdateUserAsync(user, roleManager, ct);
 
         return Results.Ok(userUpdated);
+    }
+
+    private static async Task<IResult> DeleteUserAsync([FromQuery] string mail, [FromServices] UserService userService, CancellationToken ct)
+    {
+        if (userService.GetUserByMailAsync(mail, ct) is null)
+            return Results.NotFound(mail);
+        return Results.Ok(mail);
     }
 }
