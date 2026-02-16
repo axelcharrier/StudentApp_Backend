@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using StudentApp.Domain.Entities;
 using StudentApp.Infrastructure.Abstractions;
 using StudentApp.Infrastructure.Persistence;
@@ -42,5 +43,35 @@ public class UserRepository(AppDbContext context) : IUserRepository
         }).FirstOrDefaultAsync(cancellationToken: ct);
 
         return user;
+    }
+
+    public async Task<User?> UpdateUserAsync(User user, RoleManager<IdentityRole> roleManager, CancellationToken ct)
+    {
+        var userToUpdate = await context.Users.Where(u => u.UserName == user.Mail).FirstOrDefaultAsync(ct);
+        var userRoleToUpdate = await context.UserRoles.Where(ur => ur.UserId == userToUpdate!.Id).FirstOrDefaultAsync(ct);
+
+        userToUpdate?.UserName = user.Mail;
+        userToUpdate?.NormalizedUserName = user.Mail.ToUpper();
+        userToUpdate?.Email = user.Mail;
+        userToUpdate?.NormalizedEmail = user.Mail.ToUpper();
+
+        userRoleToUpdate!.RoleId = await roleManager.GetRoleIdAsync(await context.Roles.Where(role => role.Name == user.Role).FirstOrDefaultAsync(ct));
+
+        context.Users.Update(userToUpdate!);
+        context.Update(userRoleToUpdate);
+
+        await context.SaveChangesAsync(ct).ConfigureAwait(false);
+
+        var userResponse = await context.Users.Where(u => u.UserName == user.Mail).Select(user => new User
+        {
+            Mail = user.UserName!,
+            IsMailConfirmed = user.EmailConfirmed,
+            Role = context.Roles.FirstOrDefault(role =>
+                role.Id == context.UserRoles.FirstOrDefault(userRole =>
+                    userRole.UserId == user.Id)!.RoleId)!
+                .Name!
+        }).FirstOrDefaultAsync(cancellationToken: ct);
+
+        return userResponse ?? null;
     }
 }

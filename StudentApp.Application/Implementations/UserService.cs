@@ -1,7 +1,9 @@
 ﻿namespace StudentApp.Application.Implementations;
 
+using Microsoft.AspNetCore.Identity;
 using StudentApp.Application.Abstraction;
 using StudentApp.Application.Models.Dto;
+using StudentApp.Domain.Entities;
 using StudentApp.Infrastructure.Abstractions;
 
 /// <summary>
@@ -21,5 +23,13 @@ public sealed class UserService(IUserRepository userRepository) : IUserService
     {
         var user = await userRepository.GetUserByMailAsync(mail, ct);
         return new UserDto(user.Mail, user.IsMailConfirmed, user.Role);
+    }
+
+    public async Task<UserDto?> UpdateUserAsync(User user, RoleManager<IdentityRole> roleManager, CancellationToken ct)
+    {
+        var userToUpdate = await userRepository.UpdateUserAsync(user, roleManager, ct);
+        if (userToUpdate is not null)
+            return new UserDto(userToUpdate.Mail, userToUpdate.IsMailConfirmed, userToUpdate.Role);
+        return null;
     }
 }
