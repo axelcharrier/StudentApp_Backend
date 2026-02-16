@@ -18,6 +18,8 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Add Identity services
 builder.Services.AddAuthorization(options =>

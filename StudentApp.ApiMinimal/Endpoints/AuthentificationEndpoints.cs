@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using StudentApp.ApiMinimal.Models;
 using StudentApp.ApiMinimal.Policies;
+using StudentApp.Application.Abstraction;
 using StudentApp.Application.Models.Payload;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
@@ -29,6 +30,9 @@ public static class AuthentificationEndpoints
             .RequireAuthorization();
 
         manage.MapPost("", EditUserInfos)
+            .RequireAuthorization(UserPolicy.AllowTeacher);
+
+        application.MapGet("/getAllUsers", GetAllUsers)
             .RequireAuthorization(UserPolicy.AllowTeacher);
     }
 
@@ -142,5 +146,11 @@ public static class AuthentificationEndpoints
         }
 
         return TypedResults.Ok((user, userManager));
+    }
+
+    private static async Task<IResult> GetAllUsers(CancellationToken ct, [FromServices] IUserService userService)
+    {
+        var users = await userService.GetAllUsersAsync(ct);
+        return Results.Ok(users);
     }
 }
