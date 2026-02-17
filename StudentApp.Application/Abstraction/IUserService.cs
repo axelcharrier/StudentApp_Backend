@@ -19,7 +19,7 @@ public interface IUserService
     /// <param name="ct">A cancellation token that can be used to cancel the delete operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result is <see langword="true"/> if the user was
     /// successfully deleted; otherwise, <see langword="false"/>.</returns>
-    Task<bool> DeleteUserAsync(string mail, Microsoft.AspNetCore.Identity.UserManager<Microsoft.AspNetCore.Identity.IdentityUser> userManager, CancellationToken ct);
+    Task<bool> DeleteUserAsync(string mail, CancellationToken ct);
 
     /// <summary>
     /// Updates the specified user and applies any changes to their roles asynchronously.
@@ -32,7 +32,7 @@ public interface IUserService
     /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains a UserDto with the updated user
     /// information, or null if the update fails.</returns>
-    Task<UserDto?> UpdateUserAsync(UserDto user, Microsoft.AspNetCore.Identity.RoleManager<Microsoft.AspNetCore.Identity.IdentityRole> roleManager, CancellationToken ct);
+    Task<UserDto?> UpdateUserAsync(UserDto user, CancellationToken ct);
 
     /// <summary>
     /// Asynchronously retrieves all users from the data source.
@@ -49,5 +49,5 @@ public interface IUserService
     /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains a <see cref="UserDto"/> representing
     /// the user with the specified email address, or <see langword="null"/> if no user is found.</returns>
-    Task<UserDto> GetUserByMailAsync(string mail, CancellationToken ct);
+    Task<UserDto?> GetUserByMailAsync(string mail, CancellationToken ct);
 }

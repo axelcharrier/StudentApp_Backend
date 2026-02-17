@@ -44,12 +44,15 @@ public static class UsersEndpoints
         return Results.Ok(user);
     }
 
-    private static async Task<IResult> UpdateUserAsync([FromQuery] string mail, [FromBody] UserDto user, [FromServices] IUserService userService, [FromServices] RoleManager<IdentityRole> roleManager, CancellationToken ct)
+    private static async Task<IResult> UpdateUserAsync([FromBody] UserDto user, [FromServices] IUserService userService, CancellationToken ct)
     {
-        if (await userService.GetUserByMailAsync(mail, ct) is null)
-            return Results.NotFound(mail);
+        if (await userService.GetUserByMailAsync(user.Mail, ct) is null)
+            return Results.NotFound(user.Mail);
 
-        var userUpdated = await userService.UpdateUserAsync(user, roleManager, ct);
+        var userUpdated = await userService.UpdateUserAsync(user, ct);
+
+        if (userUpdated is null)
+            return Results.BadRequest(user.Mail);
 
         return Results.Ok(userUpdated);
     }
@@ -58,6 +61,10 @@ public static class UsersEndpoints
     {
         if (userService.GetUserByMailAsync(mail, ct) is null)
             return Results.NotFound(mail);
+
+        if (!await userService.DeleteUserAsync(mail, ct))
+            return Results.BadRequest(mail);
+
         return Results.Ok(mail);
     }
 }
