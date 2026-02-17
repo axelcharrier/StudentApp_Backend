@@ -18,16 +18,18 @@ public static class UsersEndpoints
 {
     public static async Task Map(WebApplication application)
     {
-        application.MapGet(string.Empty, GetAllUsersAsync)
+        var userGroup = application.MapGroup("/users");
+
+        userGroup.MapGet(string.Empty, GetAllUsersAsync)
             .RequireAuthorization(UserPolicy.AllowTeacher);
 
-        application.MapGet("user", GetUserByMailAsync)
+        userGroup.MapGet("bymail", GetUserByMailAsync)
             .RequireAuthorization(UserPolicy.AllowTeacher);
 
-        application.MapPut(string.Empty, UpdateUserAsync)
+        userGroup.MapPut(string.Empty, UpdateUserAsync)
             .RequireAuthorization(UserPolicy.AllowTeacher);
 
-        application.MapDelete(string.Empty, DeleteUserAsync)
+        userGroup.MapDelete(string.Empty, DeleteUserAsync)
             .RequireAuthorization(UserPolicy.AllowTeacher);
     }
     private static async Task<IResult> GetAllUsersAsync(CancellationToken ct, [FromServices] IUserService userService)
