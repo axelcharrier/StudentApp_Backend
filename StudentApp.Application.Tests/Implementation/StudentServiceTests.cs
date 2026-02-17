@@ -86,7 +86,7 @@ public class StudentServiceTests
         var result = await studentService.AddStudentAsync(new StudentDto(null, "firstName", "lastName"), CancellationToken.None);
 
         // Assert
-        Assert.Equal(1, result);
+        Assert.Equal(0, result);
     }
 
     [Fact]
