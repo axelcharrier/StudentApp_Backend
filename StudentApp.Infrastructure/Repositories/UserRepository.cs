@@ -30,7 +30,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
         return users;
     }
 
-    public async Task<User> GetUserByMailAsync(string mail, CancellationToken ct)
+    public async Task<User?> GetUserByMailAsync(string mail, CancellationToken ct)
     {
         var user = await context.Users.Where(user => user.UserName == mail).Select(user => new User
         {
