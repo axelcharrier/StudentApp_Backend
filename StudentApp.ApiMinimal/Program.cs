@@ -55,6 +55,7 @@ var app = builder.Build();
 
 await StudentsEndpoints.Map(app);
 await AuthentificationEndpoints.Map(app);
+await UsersEndpoints.Map(app);
 
 #endregion 
 

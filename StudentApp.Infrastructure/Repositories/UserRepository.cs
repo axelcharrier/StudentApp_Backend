@@ -1,19 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿namespace StudentApp.Infrastructure.Repositories;
+
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using StudentApp.Domain.Entities;
 using StudentApp.Infrastructure.Abstractions;
 using StudentApp.Infrastructure.Persistence;
 
-namespace StudentApp.Infrastructure.Repositories;
-
-/// <summary>
-/// Provides methods for retrieving user information from the application's data store.
-/// </summary>
-/// <remarks>This repository encapsulates data access logic for user-related operations. It is intended to be used
-/// as a dependency in services that require user data. The class is not thread-safe; each instance should be used
-/// within a single logical operation or request.</remarks>
-/// <param name="context">The database context used to access user and role data. Cannot be null.</param>
+/// <inheritdoc/>
 public class UserRepository(AppDbContext context) : IUserRepository
 {
+    /// <inheritdoc/>
     public async Task<User[]> GetAllUsersAsync(CancellationToken ct)
     {
         var users = await context.Users.Select(user => new User
@@ -27,5 +23,55 @@ public class UserRepository(AppDbContext context) : IUserRepository
         }).ToArrayAsync(cancellationToken: ct);
 
         return users;
+    }
+
+    /// <inheritdoc/>
+    public async Task<User?> GetUserByMailAsync(string mail, CancellationToken ct)
+    {
+        var user = await context.Users.Where(user => user.UserName == mail).Select(user => new User
+        {
+            Mail = user.UserName!,
+            IsMailConfirmed = user.EmailConfirmed,
+            Role = context.Roles.FirstOrDefault(role =>
+                role.Id == context.UserRoles.FirstOrDefault(userRole =>
+                    userRole.UserId == user.Id)!.RoleId)!
+                .Name!
+        }).FirstOrDefaultAsync(cancellationToken: ct);
+
+        return user;
+    }
+
+    /// <inheritdoc/>
+    public async Task<IdentityUser?> GetIdentityUserAsync(string mail, CancellationToken ct, bool tracking = false)
+    {
+        IQueryable<IdentityUser> query = context.Users;
+        query = tracking ? query : query.AsNoTracking();
+        return await query.FirstOrDefaultAsync(u => u.UserName == mail, cancellationToken: ct);
+    }
+
+    /// <inheritdoc/>
+    public async Task<IdentityUser?> UpdateUserAsync(IdentityUser userToUpdate, CancellationToken ct)
+    {
+        if (userToUpdate.UserName is null)
+            return null;
+
+        context.Users.Update(userToUpdate);
+
+        await context.SaveChangesAsync(ct).ConfigureAwait(false);
+
+        return userToUpdate;
+    }
+
+    /// <inheritdoc/>
+    public async Task<bool> DeleteUserAsync(string mail, CancellationToken ct)
+    {
+        var userToDelete = await GetIdentityUserAsync(mail, ct);
+
+        if (userToDelete is null) return false;
+
+        context.Users.Remove(userToDelete);
+        await context.SaveChangesAsync(ct).ConfigureAwait(false);
+
+        return true;
     }
 }
