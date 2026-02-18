@@ -21,7 +21,8 @@ public interface IUserRepository
     /// <param name="userManager">The user manager instance used to perform user operations. Cannot be null.</param>
     /// <param name="ct">A cancellation token that can be used to cancel the delete operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result is <see langword="true"/> if the user was
-    /// successfully deleted; otherwise, <see langword="false"/>.</returns>
+    /// successfully deleted; otherwise, <see langword="false"/>.
+    /// </returns>
     Task<bool> DeleteUserAsync(string mail, CancellationToken ct);
 
     /// <summary>
@@ -35,7 +36,8 @@ public interface IUserRepository
     /// <param name="roleManager">The role manager used to validate and update the user's roles. Cannot be null.</param>
     /// <param name="ct">A cancellation token that can be used to cancel the update operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the updated user if the update
-    /// succeeds; otherwise, null.</returns>
+    /// succeeds; otherwise, null.
+    /// </returns>
     Task<IdentityUser?> UpdateUserAsync(IdentityUser userToUpdate, CancellationToken ct);
 
     /// <summary>
@@ -43,7 +45,8 @@ public interface IUserRepository
     /// </summary>
     /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains an array of users. The array will be
-    /// empty if no users are found.</returns>
+    /// empty if no users are found.
+    /// </returns>
     Task<User[]> GetAllUsersAsync(CancellationToken ct);
 
     /// <summary>
@@ -52,7 +55,8 @@ public interface IUserRepository
     /// <param name="mail">The email address of the user to retrieve. Cannot be null or empty.</param>
     /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the user associated with the
-    /// specified email address, or null if no user is found.</returns>
+    /// specified email address, or null if no user is found.
+    /// </returns>
     Task<User?> GetUserByMailAsync(string mail, CancellationToken ct);
 
     /// <summary>
@@ -63,7 +67,8 @@ public interface IUserRepository
     /// <param name="tracking">Specifies whether the returned user entity should be tracked by the underlying data context. Set to <see
     /// langword="true"/> to enable tracking; otherwise, <see langword="false"/>.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the <see cref="IdentityUser"/>
-    /// associated with the specified email address, or <see langword="null"/> if no user is found.</returns>
+    /// associated with the specified email address, or <see langword="null"/> if no user is found.
+    /// </returns>
     Task<IdentityUser?> GetIdentityUserAsync(string mail, CancellationToken ct, bool tracking = false);
 
     /// <summary>
@@ -72,6 +77,7 @@ public interface IUserRepository
     /// <param name="roleName">The name of the role to check for existence. Cannot be null or empty.</param>
     /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains <see langword="true"/> if the role
-    /// exists; otherwise, <see langword="false"/>.</returns>
+    /// exists; otherwise, <see langword="false"/>.
+    /// </returns>
     Task<bool> RoleExistsAsync(string roleName, CancellationToken ct);
 }
