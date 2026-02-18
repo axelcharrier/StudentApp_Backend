@@ -8,12 +8,14 @@ using StudentApp.Infrastructure.Abstractions;
 /// <inheritdoc/>
 public sealed class UserService(IUserRepository userRepository, UserManager<IdentityUser> userManager) : IUserService
 {
+    /// <inheritdoc/>
     public async Task<UserDto[]> GetAllUsersAsync(CancellationToken ct)
     {
         var users = await userRepository.GetAllUsersAsync(ct);
         return [.. users.Select(user => new UserDto(user.Mail, user.IsMailConfirmed, user.Role))];
     }
 
+    /// <inheritdoc/>
     public async Task<UserDto?> GetUserByMailAsync(string mail, CancellationToken ct)
     {
         var user = await userRepository.GetUserByMailAsync(mail, ct);
@@ -22,6 +24,7 @@ public sealed class UserService(IUserRepository userRepository, UserManager<Iden
         return new UserDto(user.Mail, user.IsMailConfirmed, user.Role);
     }
 
+    /// <inheritdoc/>
     public async Task<UserDto?> UpdateUserAsync(UserDto user, CancellationToken ct)
     {
         var userToUpdate = await userRepository.GetIdentityUserAsync(user.Mail, ct);
@@ -52,6 +55,7 @@ public sealed class UserService(IUserRepository userRepository, UserManager<Iden
         return new UserDto(user.Mail, user.IsMailConfirmed, user.Role);
     }
 
+    /// <inheritdoc/>
     public async Task<bool> DeleteUserAsync(string mail, CancellationToken ct)
     {
         var operationSuccess = await userRepository.DeleteUserAsync(mail, ct);

@@ -9,6 +9,7 @@ using StudentApp.Infrastructure.Persistence;
 /// <inheritdoc/>
 public class UserRepository(AppDbContext context) : IUserRepository
 {
+    /// <inheritdoc/>
     public async Task<User[]> GetAllUsersAsync(CancellationToken ct)
     {
         var users = await context.Users.Select(user => new User
@@ -24,6 +25,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
         return users;
     }
 
+    /// <inheritdoc/>
     public async Task<User?> GetUserByMailAsync(string mail, CancellationToken ct)
     {
         var user = await context.Users.Where(user => user.UserName == mail).Select(user => new User
@@ -39,6 +41,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
         return user;
     }
 
+    /// <inheritdoc/>
     public async Task<IdentityUser?> GetIdentityUserAsync(string mail, CancellationToken ct, bool tracking = false)
     {
         IQueryable<IdentityUser> query = context.Users;
@@ -46,6 +49,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
         return await query.FirstOrDefaultAsync(u => u.UserName == mail, cancellationToken: ct);
     }
 
+    /// <inheritdoc/>
     public async Task<IdentityUser?> UpdateUserAsync(IdentityUser userToUpdate, CancellationToken ct)
     {
         if (userToUpdate.UserName is null)
@@ -58,6 +62,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
         return userToUpdate;
     }
 
+    /// <inheritdoc/>
     public async Task<bool> DeleteUserAsync(string mail, CancellationToken ct)
     {
         var userToDelete = await GetIdentityUserAsync(mail, ct);
