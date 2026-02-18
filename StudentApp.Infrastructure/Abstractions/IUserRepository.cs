@@ -65,4 +65,13 @@ public interface IUserRepository
     /// <returns>A task that represents the asynchronous operation. The task result contains the <see cref="IdentityUser"/>
     /// associated with the specified email address, or <see langword="null"/> if no user is found.</returns>
     Task<IdentityUser?> GetIdentityUserAsync(string mail, CancellationToken ct, bool tracking = false);
+
+    /// <summary>
+    /// Asynchronously determines whether a role with the specified name exists.
+    /// </summary>
+    /// <param name="roleName">The name of the role to check for existence. Cannot be null or empty.</param>
+    /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains <see langword="true"/> if the role
+    /// exists; otherwise, <see langword="false"/>.</returns>
+    Task<bool> RoleExistsAsync(string roleName, CancellationToken ct);
 }

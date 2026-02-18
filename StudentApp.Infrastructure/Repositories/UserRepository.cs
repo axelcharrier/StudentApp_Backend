@@ -74,4 +74,9 @@ public class UserRepository(AppDbContext context) : IUserRepository
 
         return true;
     }
+
+    public async Task<bool> RoleExistsAsync(string roleName, CancellationToken ct)
+    {
+        return await context.Roles.FirstOrDefaultAsync(role => role.Name == roleName, cancellationToken: ct) != null;
+    }
 }
