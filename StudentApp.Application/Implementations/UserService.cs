@@ -41,6 +41,9 @@ public sealed class UserService(IUserRepository userRepository, UserManager<Iden
         var repositoryResponse = await userRepository.UpdateUserAsync(userToUpdate, ct);
         if (repositoryResponse is null) return null;
 
+        if (!await userRepository.RoleExistsAsync(user.Role, ct))
+            return null;
+
         var userIsInRole = (await userManager.GetUsersInRoleAsync(user.Role)).FirstOrDefault(user => user.Id == userToUpdate.Id);
 
         if (userIsInRole is null)
