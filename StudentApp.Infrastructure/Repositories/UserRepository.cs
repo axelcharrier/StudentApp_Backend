@@ -75,5 +75,5 @@ public class UserRepository(AppDbContext context) : IUserRepository
 
     /// <inheritdoc/>
     public async Task<bool> RoleExistsAsync(string roleName, CancellationToken ct) =>
-        await context.Roles.AsAsyncEnumerable().AnyAsync(role => role.Name != null && role.Name.Equals(roleName, StringComparison.OrdinalIgnoreCase), cancellationToken: ct).ConfigureAwait(false);
+        await context.Roles.AnyAsync(role => role.Name != null && role.Name == roleName, cancellationToken: ct).ConfigureAwait(false);
 }
