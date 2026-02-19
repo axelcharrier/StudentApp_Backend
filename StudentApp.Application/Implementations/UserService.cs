@@ -29,8 +29,9 @@ public sealed class UserService(IUserRepository userRepository, UserManager<Iden
     {
         var userToUpdate = await userRepository.GetIdentityUserAsync(user.Mail, ct, true);
 
-        if (userToUpdate is null)
-            return null;
+        if (userToUpdate is null) return null;
+
+        if (user.Role.Equals("Student", StringComparison.OrdinalIgnoreCase) && await IsLastTeacherAsync()) return null;
 
         userToUpdate.Email = user.Mail;
         userToUpdate.NormalizedUserName = user.Mail.ToUpper();
