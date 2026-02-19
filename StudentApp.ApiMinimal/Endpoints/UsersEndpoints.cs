@@ -61,7 +61,7 @@ public static class UsersEndpoints
 
     private static async Task<IResult> DeleteUserAsync([FromQuery] string mail, [FromServices] IUserService userService, CancellationToken ct)
     {
-        if (userService.GetUserByMailAsync(mail, ct) is null)
+        if (await userService.GetUserByMailAsync(mail, ct) is null)
             return Results.NotFound(mail);
 
         if (!await userService.DeleteUserAsync(mail, ct))

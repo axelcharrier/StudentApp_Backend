@@ -27,7 +27,7 @@ public sealed class UserService(IUserRepository userRepository, UserManager<Iden
     /// <inheritdoc/>
     public async Task<UserDto?> UpdateUserAsync(UserDto user, CancellationToken ct)
     {
-        var userToUpdate = await userRepository.GetIdentityUserAsync(user.Mail, ct);
+        var userToUpdate = await userRepository.GetIdentityUserAsync(user.Mail, ct, true);
 
         if (userToUpdate is null)
             return null;
@@ -61,7 +61,13 @@ public sealed class UserService(IUserRepository userRepository, UserManager<Iden
     /// <inheritdoc/>
     public async Task<bool> DeleteUserAsync(string mail, CancellationToken ct)
     {
+        var userRole = (await userRepository.GetUserByMailAsync(mail, ct).ConfigureAwait(false))?.Role;
+        if (userRole != null && userRole.Equals("Teacher", StringComparison.OrdinalIgnoreCase) && await IsLastTeacherAsync()) return false;
+
         var operationSuccess = await userRepository.DeleteUserAsync(mail, ct);
         return operationSuccess;
     }
+
+    public async Task<bool> IsLastTeacherAsync() =>
+        await (await userManager.GetUsersInRoleAsync("Teacher")).ToAsyncEnumerable().CountAsync().ConfigureAwait(false) <= 1;
 }
