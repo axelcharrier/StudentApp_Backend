@@ -34,13 +34,13 @@ public static class UsersEndpoints
     }
     private static async Task<IResult> GetAllUsersAsync(CancellationToken ct, [FromServices] IUserService userService)
     {
-        var users = await userService.GetAllUsersAsync(ct);
+        var users = await userService.GetAllUsersAsync(ct).ConfigureAwait(false);
         return Results.Ok(users);
     }
 
     private static async Task<IResult> GetUserByMailAsync([FromQuery] string mail, CancellationToken ct, [FromServices] IUserService userService)
     {
-        var user = await userService.GetUserByMailAsync(mail, ct);
+        var user = await userService.GetUserByMailAsync(mail, ct).ConfigureAwait(false);
         if (user is null)
             return Results.NotFound(mail);
         return Results.Ok(user);
@@ -48,10 +48,10 @@ public static class UsersEndpoints
 
     private static async Task<IResult> UpdateUserAsync([FromBody] UserDto user, [FromServices] IUserService userService, CancellationToken ct)
     {
-        if (await userService.GetUserByMailAsync(user.Mail, ct) is null)
+        if (await userService.GetUserByMailAsync(user.Mail, ct).ConfigureAwait(false) is null)
             return Results.NotFound(user.Mail);
 
-        var userUpdated = await userService.UpdateUserAsync(user, ct);
+        var userUpdated = await userService.UpdateUserAsync(user, ct).ConfigureAwait(false);
 
         if (userUpdated is null)
             return Results.BadRequest(user.Mail);
@@ -61,10 +61,10 @@ public static class UsersEndpoints
 
     private static async Task<IResult> DeleteUserAsync([FromQuery] string mail, [FromServices] IUserService userService, CancellationToken ct)
     {
-        if (await userService.GetUserByMailAsync(mail, ct) is null)
+        if (await userService.GetUserByMailAsync(mail, ct).ConfigureAwait(false) is null)
             return Results.NotFound(mail);
 
-        if (!await userService.DeleteUserAsync(mail, ct))
+        if (!await userService.DeleteUserAsync(mail, ct).ConfigureAwait(false))
             return Results.BadRequest(mail);
 
         return Results.Ok(mail);

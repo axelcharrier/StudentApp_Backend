@@ -20,7 +20,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
                 role.Id == context.UserRoles.FirstOrDefault(userRole =>
                     userRole.UserId == user.Id)!.RoleId)!
                 .Name!
-        }).ToArrayAsync(cancellationToken: ct);
+        }).ToArrayAsync(cancellationToken: ct).ConfigureAwait(false);
 
         return users;
     }
@@ -36,7 +36,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
                 role.Id == context.UserRoles.FirstOrDefault(userRole =>
                     userRole.UserId == user.Id)!.RoleId)!
                 .Name!
-        }).FirstOrDefaultAsync(cancellationToken: ct);
+        }).FirstOrDefaultAsync(cancellationToken: ct).ConfigureAwait(false);
 
         return user;
     }
@@ -46,7 +46,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
     {
         IQueryable<IdentityUser> query = context.Users;
         query = tracking ? query : query.AsNoTracking();
-        return await query.FirstOrDefaultAsync(u => u.UserName == mail, cancellationToken: ct);
+        return await query.FirstOrDefaultAsync(u => u.UserName == mail, cancellationToken: ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
