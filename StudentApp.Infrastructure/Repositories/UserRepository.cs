@@ -20,7 +20,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
                 role.Id == context.UserRoles.FirstOrDefault(userRole =>
                     userRole.UserId == user.Id)!.RoleId)!
                 .Name!
-        }).ToArrayAsync(cancellationToken: ct);
+        }).ToArrayAsync(cancellationToken: ct).ConfigureAwait(false);
 
         return users;
     }
@@ -36,7 +36,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
                 role.Id == context.UserRoles.FirstOrDefault(userRole =>
                     userRole.UserId == user.Id)!.RoleId)!
                 .Name!
-        }).FirstOrDefaultAsync(cancellationToken: ct);
+        }).FirstOrDefaultAsync(cancellationToken: ct).ConfigureAwait(false);
 
         return user;
     }
@@ -46,7 +46,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
     {
         IQueryable<IdentityUser> query = context.Users;
         query = tracking ? query : query.AsNoTracking();
-        return await query.FirstOrDefaultAsync(u => u.UserName == mail, cancellationToken: ct);
+        return await query.FirstOrDefaultAsync(u => u.UserName == mail, cancellationToken: ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -54,8 +54,6 @@ public class UserRepository(AppDbContext context) : IUserRepository
     {
         if (userToUpdate.UserName is null)
             return null;
-
-        context.Users.Update(userToUpdate);
 
         await context.SaveChangesAsync(ct).ConfigureAwait(false);
 
@@ -65,7 +63,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
     /// <inheritdoc/>
     public async Task<bool> DeleteUserAsync(string mail, CancellationToken ct)
     {
-        var userToDelete = await GetIdentityUserAsync(mail, ct);
+        var userToDelete = await GetIdentityUserAsync(mail, ct, true).ConfigureAwait(false);
 
         if (userToDelete is null) return false;
 
@@ -77,5 +75,5 @@ public class UserRepository(AppDbContext context) : IUserRepository
 
     /// <inheritdoc/>
     public async Task<bool> RoleExistsAsync(string roleName, CancellationToken ct) =>
-        await context.Roles.AnyAsync(role => role.Name != null && role.Name.Equals(roleName, StringComparison.OrdinalIgnoreCase), cancellationToken: ct).ConfigureAwait(false);
+        await context.Roles.AnyAsync(role => role.Name != null && role.Name == roleName, cancellationToken: ct).ConfigureAwait(false);
 }
