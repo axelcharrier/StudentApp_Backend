@@ -21,7 +21,7 @@ public static class AuthentificationEndpoints
         application.MapPost("/login", Login);
 
         application.MapPost("/logout", Logout)
-            .RequireAuthorization(UserPolicy.AllowTeacher);
+            .RequireAuthorization();
 
         var manage = application.MapGroup("/manage/info");
 
