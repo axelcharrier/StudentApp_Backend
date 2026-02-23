@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Identity;
 using StudentApp.Application.Abstraction;
+using StudentApp.Application.Mappers;
 using StudentApp.Application.Models.Dto;
 using StudentApp.Infrastructure.Abstractions;
 
@@ -12,7 +13,7 @@ public sealed class UserService(IUserRepository userRepository, UserManager<Iden
     public async Task<UserDto[]> GetAllUsersAsync(CancellationToken ct)
     {
         var users = await userRepository.GetAllUsersAsync(ct).ConfigureAwait(false);
-        return [.. users.Select(user => new UserDto(user.Mail, user.IsMailConfirmed, user.Role))];
+        return [.. users.Select(user => user.ToUserDto())];
     }
 
     /// <inheritdoc/>
@@ -21,12 +22,14 @@ public sealed class UserService(IUserRepository userRepository, UserManager<Iden
         var user = await userRepository.GetUserByMailAsync(mail, ct).ConfigureAwait(false);
         if (user is null)
             return null;
-        return new UserDto(user.Mail, user.IsMailConfirmed, user.Role);
+        return user.ToUserDto();
     }
 
     /// <inheritdoc/>
     public async Task<UserDto?> UpdateUserAsync(UserDto user, CancellationToken ct)
     {
+        if (user.Mail == null) return null;
+
         var userToUpdate = await userRepository.GetIdentityUserAsync(user.Mail, ct, true).ConfigureAwait(false);
         if (userToUpdate is null) return null;
 
@@ -57,7 +60,7 @@ public sealed class UserService(IUserRepository userRepository, UserManager<Iden
             await userManager.AddToRoleAsync(userToUpdate, user.Role).ConfigureAwait(false);
         }
 
-        return new UserDto(user.Mail, user.IsMailConfirmed, user.Role);
+        return user;
     }
 
     /// <inheritdoc/>

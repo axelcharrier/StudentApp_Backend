@@ -1,6 +1,7 @@
 ﻿namespace StudentApp.Application.Implementations;
 
 using StudentApp.Application.Abstraction;
+using StudentApp.Application.Mappers;
 using StudentApp.Application.Models.Dto;
 using StudentApp.Domain.Entities;
 using StudentApp.Infrastructure.Abstractions;
@@ -13,7 +14,7 @@ public sealed class StudentService(IStudentRepository studentRepository) : IStud
     public async Task<StudentDto[]> GetAllStudentsAsync(CancellationToken ct)
     {
         var students = await studentRepository.GetAllStudentsAsync(ct);
-        var result = students.Select(stu => new StudentDto(stu.Id, stu.FirstName, stu.LastName)).ToArray();
+        var result = students.Select(stu => stu.ToStudentDto()).ToArray();
 
         return result;
     }
@@ -23,7 +24,7 @@ public sealed class StudentService(IStudentRepository studentRepository) : IStud
         var student = await studentRepository.GetStudentByIdAsync(id, ct);
         if (student is null)
             return null;
-        return new StudentDto(student.Id, student.FirstName, student.LastName);
+        return student.ToStudentDto();
     }
 
     public async Task<int> AddStudentAsync(StudentDto student, CancellationToken ct)
