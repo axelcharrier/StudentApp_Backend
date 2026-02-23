@@ -16,7 +16,7 @@ To clone this project :
 ```git clone https://https://github.com/axelcharrier/StudentApp_Backend```
 ```cd StudentApp_Backend```
 
-**Init your secret to configure your database connection string**
+**Init your secrets to configure your database connection string**
 
 ```dotnet ef database update```
 ```dotnet start```
