@@ -1,5 +1,5 @@
 # Minimale API
-_This is only a part of the entire project for more try the [global README](https://github.com/axelcharrier/StudentApp_Backend).
+_This is only a part of the entire project for more try the [global README](https://github.com/axelcharrier/StudentApp_Backend)._
 
 ## Structure
 This layer is the Api part, we use the "minimal" format.
