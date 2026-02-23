@@ -11,9 +11,19 @@ For a better comprehension of the structure :
 ## Orchestration 
 This project is run by Aspire to organise the application start
 
+## Initialisation 
+To clone this project :
+```git clone https://https://github.com/axelcharrier/StudentApp_Backend```
+```cd StudentApp_Backend```
+
+**Init your secret to configure your database connection string**
+
+```dotnet ef database update```
+```dotnet start```
+
 ## For more 
 - [Aspire layer]()
 - [MinimalApi layer]()
 - [Application layer]()
 - [Infrastructure layer]()
-- [Domain]()
+- [Domain layer]()
