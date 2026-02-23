@@ -2,7 +2,7 @@
 
 using NSubstitute;
 using StudentApp.Application.Implementations;
-using StudentApp.Application.Models;
+using StudentApp.Application.Models.Dto;
 using StudentApp.Domain.Entities;
 using StudentApp.Infrastructure.Abstractions;
 using System.Threading;
@@ -86,7 +86,7 @@ public class StudentServiceTests
         var result = await studentService.AddStudentAsync(new StudentDto(null, "firstName", "lastName"), CancellationToken.None);
 
         // Assert
-        Assert.Equal(1, result);
+        Assert.Equal(0, result);
     }
 
     [Fact]

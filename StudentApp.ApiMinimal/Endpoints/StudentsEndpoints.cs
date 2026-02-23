@@ -1,8 +1,10 @@
 ﻿namespace StudentApp.ApiMinimal.Endpoints;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using StudentApp.ApiMinimal.Policies;
 using StudentApp.Application.Abstraction;
-using StudentApp.Application.Models;
+using StudentApp.Application.Models.Dto;
 using System.Threading.Tasks;
 
 
@@ -14,6 +16,7 @@ public static class StudentsEndpoints
     /// </summary>
     /// <param name="application">The web application to which the student endpoints will be mapped. Must not be null.</param>
     /// <returns>A task that represents the asynchronous operation of mapping the student endpoints.</returns>
+
     public static async Task Map(WebApplication application)
     {
         var studentsRoute = application.MapGroup("/students");
@@ -23,18 +26,21 @@ public static class StudentsEndpoints
             .Produces(StatusCodes.Status404NotFound)
             .WithName("GetAllStudents")
             .WithDisplayName("Get all students")
-            .WithSummary("Get all students from de database");
+            .WithSummary("Get all students from de database")
+            .RequireAuthorization();
 
         studentsRoute.MapGet("{id}", GetByIdAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .WithName("GetStudentById")
             .WithDisplayName("Get a student by id")
-            .WithSummary("Get a student thanks to his id");
+            .WithSummary("Get a student thanks to his id")
+            .RequireAuthorization();
 
         studentsRoute.MapPost(string.Empty, AddStudentAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
+            .RequireAuthorization(UserPolicy.AllowTeacher)
             .WithName("AddStudent")
             .WithDisplayName("Add a student")
             .WithSummary("Add a student to the database");
@@ -43,6 +49,7 @@ public static class StudentsEndpoints
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status400BadRequest)
+            .RequireAuthorization(UserPolicy.AllowTeacher)
             .WithName("UpdateStudent")
             .WithDisplayName("Update a student")
             .WithSummary("Update a student who already exists");
@@ -50,6 +57,7 @@ public static class StudentsEndpoints
         studentsRoute.MapDelete("{id}", DeleteStudentAsync)
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
+            .RequireAuthorization(UserPolicy.AllowTeacher)
             .WithName("DeleteStudent")
             .WithDisplayName("Delete a student")
             .WithSummary("Permanently delete a student to the database");
@@ -114,9 +122,6 @@ public static class StudentsEndpoints
             return Results.BadRequest("Cannot found student with this Id");
 
         return Results.Ok(await service.DeleteStudentAsync(id, ct));
-
-
-
     }
 
     #endregion
