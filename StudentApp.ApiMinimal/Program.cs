@@ -25,7 +25,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(UserPolicy.AllowTeacher,
-        policy => policy.RequireRole(UserPolicy.TeacherRole));
+        policy => policy.RequireRole(UserPolicy.TeacherRole, UserPolicy.AdminRole));
 });
 
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
@@ -50,6 +50,51 @@ builder.Services.AddOpenApi();
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+    string[] roles = [UserPolicy.AdminRole, UserPolicy.TeacherRole, "Student"];
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+
+    const string adminEmail = "admin@admin.fr";
+    const string adminPassword = "Admin@123";
+
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser is null)
+    {
+        adminUser = new IdentityUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            EmailConfirmed = true
+        };
+
+        var createAdminResult = await userManager.CreateAsync(adminUser, adminPassword);
+        if (!createAdminResult.Succeeded)
+        {
+            throw new InvalidOperationException(string.Join("; ", createAdminResult.Errors.Select(e => e.Description)));
+        }
+    }
+
+    if (!await userManager.IsInRoleAsync(adminUser, UserPolicy.AdminRole))
+    {
+        var addToRoleResult = await userManager.AddToRoleAsync(adminUser, UserPolicy.AdminRole);
+        if (!addToRoleResult.Succeeded)
+        {
+            throw new InvalidOperationException(string.Join("; ", addToRoleResult.Errors.Select(e => e.Description)));
+        }
+    }
+}
 
 #region Méthodes
 

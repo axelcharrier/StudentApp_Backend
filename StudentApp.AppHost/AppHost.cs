@@ -15,12 +15,12 @@ var api = builder.AddProject<StudentApp_ApiMinimal>("Api")
     .WithReference(sqlDatabase)
     .WaitFor(sqlDatabase);
 
-builder.AddJavaScriptApp("Frontend", "../../ProjetAngular")
-    .WaitFor(api)
-    .WithReference(api)
-    .WithPnpm(true)
-    .WithRunScript("start")
-    .WithUrl(url: "https://localhost:4200")
-    .WithExternalHttpEndpoints();
+//builder.AddJavaScriptApp("Frontend", "../../ProjetAngular")
+//    .WaitFor(api)
+//    .WithReference(api)
+//    .WithPnpm(true)
+//    .WithRunScript("start")
+//    .WithUrl(url: "https://localhost:4200")
+//    .WithExternalHttpEndpoints();
 
 await builder.Build().RunAsync();
