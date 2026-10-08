@@ -4,5 +4,6 @@
     {
         public const string AllowTeacher = nameof(UserPolicy.AllowTeacher);
         public const string TeacherRole = "Teacher";
+        public const string AdminRole = "Admin";
     }
 }

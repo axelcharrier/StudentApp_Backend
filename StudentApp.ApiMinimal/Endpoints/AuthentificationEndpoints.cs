@@ -65,7 +65,7 @@ public static class AuthentificationEndpoints
         return Results.Unauthorized();
     }
 
-    [Authorize(Roles = "Teacher")]
+    [Authorize(Policy = UserPolicy.AllowTeacher)]
     private static async Task<IResult> Register(
         [FromBody] UserPayload registration,
         HttpContext context,
@@ -73,7 +73,20 @@ public static class AuthentificationEndpoints
         [FromServices] UserManager<IdentityUser> userManager,
         [FromServices] IUserStore<IdentityUser> userStore)
     {
+        const string studentRole = "Student";
         string regexEmailPatern = """^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$""";
+
+        var isAdmin = context.User.IsInRole(UserPolicy.AdminRole);
+        var isTeacher = context.User.IsInRole(UserPolicy.TeacherRole);
+        var targetRole = registration.RoleName;
+
+        var canCreate = isAdmin
+            ? targetRole.Equals(studentRole, StringComparison.OrdinalIgnoreCase) ||
+              targetRole.Equals(UserPolicy.TeacherRole, StringComparison.OrdinalIgnoreCase)
+            : isTeacher && targetRole.Equals(studentRole, StringComparison.OrdinalIgnoreCase);
+
+        if (!canCreate)
+            return Results.Forbid();
 
         var emailStore = (IUserEmailStore<IdentityUser>)userStore;
         var email = registration.Email;
